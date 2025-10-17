@@ -61,6 +61,15 @@ namespace Perfect11.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string UWPSystemAppList {
+            get {
+                return ResourceManager.GetString("UWPSystemAppList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap win11logo {
