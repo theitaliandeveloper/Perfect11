@@ -5,6 +5,10 @@ VisualStudioVersion = 17.14.36429.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11", "Perfect11\Perfect11.csproj", "{B77C3F94-29F7-40D8-BF81-969C1BBAD7A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11.TweaksInterface", "Perfect11.TweaksInterface\Perfect11.TweaksInterface.csproj", "{B3F8761A-B4B2-4378-9FE8-06BBFC39FCE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11.Inbox.UninstallOneDrive", "tweaks\Perfect11.Inbox.UninstallOneDrive\Perfect11.Inbox.UninstallOneDrive.csproj", "{AD55727D-A52C-459D-A316-3459AA80050A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{B77C3F94-29F7-40D8-BF81-969C1BBAD7A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B77C3F94-29F7-40D8-BF81-969C1BBAD7A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B77C3F94-29F7-40D8-BF81-969C1BBAD7A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3F8761A-B4B2-4378-9FE8-06BBFC39FCE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3F8761A-B4B2-4378-9FE8-06BBFC39FCE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3F8761A-B4B2-4378-9FE8-06BBFC39FCE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3F8761A-B4B2-4378-9FE8-06BBFC39FCE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD55727D-A52C-459D-A316-3459AA80050A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD55727D-A52C-459D-A316-3459AA80050A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD55727D-A52C-459D-A316-3459AA80050A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD55727D-A52C-459D-A316-3459AA80050A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

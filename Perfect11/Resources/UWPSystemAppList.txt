@@ -57,3 +57,16 @@ Microsoft.DesktopAppInstaller
 Microsoft.SecHealthUI
 Microsoft.StartExperiencesApp
 Microsoft.Windows.AugLoop.CBS
+MicrosoftWindows.Client.AIX
+MicrosoftWindows.Client.CBS
+MicrosoftWindows.Client.Core
+MicrosoftWindows.Client.FileExp
+MicrosoftWindows.Client.OOBE
+MicrosoftWindows.Client.Photon
+MicrosoftWindows.Client.WebExperience
+MicrosoftWindows.CrossDevice
+MicrosoftWindows.UndockedDevKit
+Microsoft.LanguageExperiencePack
+Microsoft.XboxIdentityProvider
+Microsoft.Xbox.TCUI
+Microsoft.Edge.GameAssist
