@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Perfect11")]
+[assembly: AssemblyTitle("Perfect11 Optimization and Customization Toolkit")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Vichingo455")]
 [assembly: AssemblyProduct("Perfect11")]
-[assembly: AssemblyCopyright("Copyright ©  2025")]
+[assembly: AssemblyCopyright("Copyright © 2025 Vichingo455")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
