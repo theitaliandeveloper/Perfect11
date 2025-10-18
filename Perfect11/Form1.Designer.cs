@@ -51,6 +51,7 @@
             this.tweaksPage = new ReaLTaiizor.Controls.PoisonTabPage();
             this.runTweaks = new ReaLTaiizor.Controls.PoisonButton();
             this.tweaksList = new ReaLTaiizor.Controls.PoisonListView();
+            this.githubLink = new ReaLTaiizor.Controls.PoisonLinkLabel();
             this.theme.SuspendLayout();
             this.pages.SuspendLayout();
             this.welcomePage.SuspendLayout();
@@ -62,8 +63,10 @@
             // theme
             // 
             this.theme.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(41)))), ((int)(((byte)(50)))));
+            this.theme.Controls.Add(this.githubLink);
             this.theme.Controls.Add(this.controlBoxEdit1);
             this.theme.Controls.Add(this.pages);
+            this.theme.Controls.Add(this.editionLabel);
             this.theme.Dock = System.Windows.Forms.DockStyle.Fill;
             this.theme.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.theme.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(142)))), ((int)(((byte)(142)))), ((int)(((byte)(142)))));
@@ -97,7 +100,7 @@
             this.pages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pages.Location = new System.Drawing.Point(3, 28);
             this.pages.Name = "pages";
-            this.pages.SelectedIndex = 1;
+            this.pages.SelectedIndex = 0;
             this.pages.Size = new System.Drawing.Size(1323, 732);
             this.pages.TabIndex = 1;
             this.pages.UseSelectable = true;
@@ -106,7 +109,6 @@
             // 
             this.welcomePage.BackgroundImage = global::Perfect11.Properties.Resources.win11wallpaperdark;
             this.welcomePage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.welcomePage.Controls.Add(this.editionLabel);
             this.welcomePage.Controls.Add(this.poisonLabel2);
             this.welcomePage.Controls.Add(this.pictureBox1);
             this.welcomePage.Controls.Add(this.poisonLabel1);
@@ -126,7 +128,7 @@
             // 
             this.editionLabel.AutoSize = true;
             this.editionLabel.BackColor = System.Drawing.Color.Transparent;
-            this.editionLabel.Location = new System.Drawing.Point(16, 656);
+            this.editionLabel.Location = new System.Drawing.Point(12, 763);
             this.editionLabel.Name = "editionLabel";
             this.editionLabel.Size = new System.Drawing.Size(175, 19);
             this.editionLabel.TabIndex = 4;
@@ -139,10 +141,10 @@
             this.poisonLabel2.BackColor = System.Drawing.Color.Transparent;
             this.poisonLabel2.Location = new System.Drawing.Point(416, 379);
             this.poisonLabel2.Name = "poisonLabel2";
-            this.poisonLabel2.Size = new System.Drawing.Size(465, 38);
+            this.poisonLabel2.Size = new System.Drawing.Size(459, 38);
             this.poisonLabel2.TabIndex = 3;
             this.poisonLabel2.Text = "Perfect11 is a tool made by a guy who loves to optimize Windows.\r\nIt allows to in" +
-    "stalls apps, remove bloatware, configure services and even more.";
+    "stalls apps, remove bloatware, tweak the system and even more.";
             this.poisonLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.poisonLabel2.UseCustomBackColor = true;
             // 
@@ -344,14 +346,12 @@
             // 
             // tweaksList
             // 
-            this.tweaksList.AllowSorting = true;
             this.tweaksList.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.tweaksList.FullRowSelect = true;
             this.tweaksList.Location = new System.Drawing.Point(0, 0);
             this.tweaksList.Name = "tweaksList";
             this.tweaksList.OwnerDraw = true;
             this.tweaksList.Size = new System.Drawing.Size(1310, 617);
-            this.tweaksList.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.tweaksList.TabIndex = 2;
             this.tweaksList.UseCompatibleStateImageBehavior = false;
             this.tweaksList.UseCustomBackColor = true;
@@ -359,6 +359,21 @@
             this.tweaksList.UseSelectable = true;
             this.tweaksList.UseStyleColors = true;
             this.tweaksList.Resize += new System.EventHandler(this.tweaksList_Resize);
+            // 
+            // githubLink
+            // 
+            this.githubLink.BackColor = System.Drawing.Color.Transparent;
+            this.githubLink.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.githubLink.Location = new System.Drawing.Point(1275, 762);
+            this.githubLink.Name = "githubLink";
+            this.githubLink.Size = new System.Drawing.Size(48, 26);
+            this.githubLink.TabIndex = 5;
+            this.githubLink.Text = "GitHub";
+            this.githubLink.UseCustomBackColor = true;
+            this.githubLink.UseCustomForeColor = true;
+            this.githubLink.UseSelectable = true;
+            this.githubLink.UseStyleColors = true;
+            this.githubLink.Click += new System.EventHandler(this.githubLink_Click);
             // 
             // Form1
             // 
@@ -377,6 +392,7 @@
             this.TransparencyKey = System.Drawing.Color.Fuchsia;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.theme.ResumeLayout(false);
+            this.theme.PerformLayout();
             this.pages.ResumeLayout(false);
             this.welcomePage.ResumeLayout(false);
             this.welcomePage.PerformLayout();
@@ -412,6 +428,7 @@
         private ReaLTaiizor.Controls.PoisonListView tweaksList;
         private ReaLTaiizor.Controls.PoisonButton runTweaks;
         private ReaLTaiizor.Controls.PoisonLabel editionLabel;
+        private ReaLTaiizor.Controls.PoisonLinkLabel githubLink;
     }
 }
 

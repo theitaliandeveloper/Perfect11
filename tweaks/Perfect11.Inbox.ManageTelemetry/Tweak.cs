@@ -102,15 +102,22 @@ namespace Perfect11.Inbox.ManageTelemetry
             }
             bool IsTelemetryActivated()
             {
-                RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection");
-                int value = (int)rk.GetValue("AllowTelemetry");
-                rk.Close();
-                return value != 0;
+                try
+                {
+                    RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection");
+                    int value = (int)rk.GetValue("AllowTelemetry");
+                    rk.Close();
+                    return value != 0;
+                } catch
+                {
+                    return true;
+                }
             }
             if (IsTelemetryActivated())
             {
                 // Step 1: Registry
-                RegistryKey rk = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection");
+                RegistryKey rk;
+                rk = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection");
                 rk.SetValue("AllowTelemetry",0,RegistryValueKind.DWord);
                 rk.SetValue("MaxTelemetryAllowed", 0, RegistryValueKind.DWord);
                 rk.Close();
@@ -143,7 +150,8 @@ namespace Perfect11.Inbox.ManageTelemetry
             else
             {
                 // Step 1: Registry
-                RegistryKey rk = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection");
+                RegistryKey rk;
+                rk = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection");
                 rk.DeleteValue("AllowTelemetry");
                 rk.DeleteValue("MaxTelemetryAllowed");
                 rk.Close();

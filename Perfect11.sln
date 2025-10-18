@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11.Inbox.UninstallOn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11.Inbox.ManageTelemetry", "tweaks\Perfect11.Inbox.ManageTelemetry\Perfect11.Inbox.ManageTelemetry.csproj", "{2F175C96-FDBA-49D8-BE83-1998C1F75FA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11.Inbox.DisableAds", "tweaks\Perfect11.Inbox.DisableAds\Perfect11.Inbox.DisableAds.csproj", "{0BCF623D-B134-4824-9167-2F0A39532BDD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11.Inbox.Spotlight", "tweaks\Perfect11.Inbox.Spotlight\Perfect11.Inbox.Spotlight.csproj", "{77376E26-3164-4ED7-9F85-02B3AEBFC751}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{2F175C96-FDBA-49D8-BE83-1998C1F75FA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F175C96-FDBA-49D8-BE83-1998C1F75FA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F175C96-FDBA-49D8-BE83-1998C1F75FA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BCF623D-B134-4824-9167-2F0A39532BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BCF623D-B134-4824-9167-2F0A39532BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BCF623D-B134-4824-9167-2F0A39532BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BCF623D-B134-4824-9167-2F0A39532BDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77376E26-3164-4ED7-9F85-02B3AEBFC751}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77376E26-3164-4ED7-9F85-02B3AEBFC751}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77376E26-3164-4ED7-9F85-02B3AEBFC751}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77376E26-3164-4ED7-9F85-02B3AEBFC751}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

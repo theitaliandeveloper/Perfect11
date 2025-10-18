@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Principal;
 
 namespace Perfect11.Library
 {
@@ -54,6 +55,56 @@ namespace Perfect11.Library
             int value = (int)rk.GetValue("AppsUseLightTheme");
             rk.Close();
             return value == 0;
+        }
+        public static string EolApp(string app)
+        {
+            try
+            {
+                // Use your PowerShell.Execute helper
+                string packageFullName = PowerShell.Execute(
+                    "Get-AppxPackage -AllUsers | Where-Object { $_.PackageFullName -like '*" + app +"*' } | Select-Object -ExpandProperty PackageFullName"
+                );
+
+                if (string.IsNullOrWhiteSpace(packageFullName))
+                {
+                    return "Sticky Notes package not found.";
+                }
+
+                Console.WriteLine($"Found package: {packageFullName}");
+
+                // Get current user SID
+                string userSid = WindowsIdentity.GetCurrent().User?.Value;
+                if (string.IsNullOrEmpty(userSid))
+                {
+                    return "Unable to get current user SID.";
+                }
+
+                // Registry base path
+                string basePath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Appx\AppxAllUserStore";
+                string[] subKeys =
+                {
+                $@"EndOfLife\{userSid}\{packageFullName}",
+                $@"EndOfLife\S-1-5-18\{packageFullName}",
+                $@"Deprovisioned\{packageFullName}"
+            };
+
+                foreach (var subKey in subKeys)
+                {
+                    try
+                    {
+                        Registry.LocalMachine.CreateSubKey(basePath + "\\" + subKey);
+                    }
+                    catch (Exception ex)
+                    {
+                        return $"Error: {ex.Message}";
+                    }
+                }
+                return "Deprovision completed successfully.";
+            }
+            catch (Exception ex)
+            {
+                return $"Error: {ex.Message}";
+            }
         }
     }
 }

@@ -1,12 +1,9 @@
 ﻿using Microsoft.Win32;
 using Perfect11.TweaksInterface;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Perfect11.Inbox.UninstallOneDrive
 {
@@ -24,6 +21,11 @@ namespace Perfect11.Inbox.UninstallOneDrive
                 try
                 {
                     using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"))
+                    {
+                        if (key != null)
+                            regExists = key.GetSubKeyNames().Any(n => n.ToLower().Contains("onedrive"));
+                    }
+                    using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall"))
                     {
                         if (key != null)
                             regExists = key.GetSubKeyNames().Any(n => n.ToLower().Contains("onedrive"));

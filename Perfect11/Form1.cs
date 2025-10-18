@@ -5,6 +5,7 @@ using ReaLTaiizor.Enum.Poison;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -56,6 +57,7 @@ namespace Perfect11
                 tweaksList.BackColor = Color.FromArgb(17, 17, 17);
                 poisonLabel1.ForeColor = Color.FromArgb(255, 255, 255);
                 poisonLabel2.ForeColor = Color.FromArgb(255, 255, 255);
+                githubLink.Theme = ThemeStyle.Dark;
             }
             else
             {
@@ -82,13 +84,14 @@ namespace Perfect11
                 LstUWP.BackColor = Color.FromArgb(255,255,255);
                 LstUWPRemove.BackColor = Color.FromArgb(255,255,255);
                 tweaksList.BackColor = Color.FromArgb(255,255,255);
+                githubLink.Theme = ThemeStyle.Light;
             }
         }
         private void Form1_Load(object sender, EventArgs e)
         {
             pages.SelectedTab = welcomePage; // Always start from the first tab
             editionLabel.Text = AppEdition;
-            theme.Text = AppEdition;
+            //theme.Text = AppEdition;
             LstUWP.View = View.Details;
             LstUWP.Columns.Clear();
             LstUWP.Columns.Add("App Name", -2, HorizontalAlignment.Left);
@@ -185,13 +188,15 @@ namespace Perfect11
                 string command2 = $"Get-AppxProvisionedPackage -online | Where PackageName -like *\"{appName}\"* | Remove-AppxProvisionedPackage -online";
                 try
                 {
+                    string output3 = Utilities.EolApp(appName);
                     string output2 = PowerShell.Execute(command2);
                     string output = PowerShell.Execute(command);
 #if DEBUG
+                    MessageBox.Show(output3);
                     MessageBox.Show(output2);
                     MessageBox.Show(output);
 #endif
-                    if (!output.ToLower().Contains("error") && !output2.ToLower().Contains("error"))
+                    if (!output.ToLower().Contains("error") && !output2.ToLower().Contains("error") && !output3.ToLower().Contains("error"))
                     {
                         success += "\t" + appName + "\n";
                     }
@@ -210,7 +215,7 @@ namespace Perfect11
 
         private void ChkShowUWPSystem_CheckedChanged(object sender, EventArgs e)
         {
-            if (ChkShowUWPSystem.Checked) MessageBox.Show("You're about to show system UWP apps. Those apps if removed can break several things in your system. Proceed with caution.", "Perfect11 - WARNING", MessageBoxButtons.OK);
+            if (ChkShowUWPSystem.Checked) MessageBox.Show("You're about to show system UWP apps. Those apps if removed can break several things in your system. Proceed with caution.", "Perfect11", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             GetUWP();
         }
 
@@ -284,36 +289,63 @@ namespace Perfect11
         }
         private void InitializeTweaks()
         {
-            if (!Directory.Exists("Tweaks"))
-            {
-                Directory.CreateDirectory("Tweaks");
-            }
-            if (File.Exists("Tweaks\\Perfect11.TweaksInterface.dll"))
-            {
-                File.Delete("Tweaks\\Perfect11.TweaksInterface.dll");
-            }
-            var categorizedPlugins = Utilities.LoadTweaks(@"Tweaks");
+            const string tweaksFolder = "Tweaks";
+            const string interfaceDll = "Perfect11.TweaksInterface.dll";
+
+            // Ensure folder exists and remove old interface DLL
+            if (!Directory.Exists(tweaksFolder))
+                Directory.CreateDirectory(tweaksFolder);
+
+            string interfacePath = Path.Combine(tweaksFolder, interfaceDll);
+            if (File.Exists(interfacePath))
+                File.Delete(interfacePath);
+
+            // Load categorized plugins
+            var categorizedPlugins = Utilities.LoadTweaks(tweaksFolder);
+
+            // Setup ListView
             tweaksList.View = View.Details;
-            tweaksList.Columns.Clear();
-            tweaksList.Columns.Add("Tweaks", -2, HorizontalAlignment.Left);
-            int totalWidth = tweaksList.ClientSize.Width;
-            tweaksList.Columns[0].Width = totalWidth;
+            tweaksList.FullRowSelect = true;
+            tweaksList.ShowGroups = true;
             tweaksList.Items.Clear();
             tweaksList.Groups.Clear();
-            tweaksList.FullRowSelect = true;
-            foreach (var category in categorizedPlugins)
+
+            // Setup columns
+            tweaksList.Columns.Clear();
+            tweaksList.Columns.Add("Tweak");
+            tweaksList.Columns.Add("Description");
+            AdjustListViewColumns();
+
+            // Add groups and items
+            foreach (var category in categorizedPlugins.OrderBy(c => c.Key))
             {
                 var group = new ListViewGroup(category.Key);
                 tweaksList.Groups.Add(group);
-                foreach (var plugin in category.Value)
+
+                foreach (var plugin in category.Value.OrderBy(p => p.Name))
                 {
-                    var item = new ListViewItem(plugin.Name) { Group = group };
-                    item.Tag = plugin;
+                    var item = new ListViewItem(plugin.Name)
+                    {
+                        Group = group,
+                        Tag = plugin
+                    };
+                    item.SubItems.Add(plugin.Description);
                     tweaksList.Items.Add(item);
                 }
             }
-            tweaksList.ShowGroups = true;
-            if (tweaksList.Items.Count == 0) runTweaks.Enabled = false;
+
+            // Enable or disable run button
+            runTweaks.Enabled = tweaksList.Items.Count > 0;
+        }
+
+        // Adjust column widths dynamically based on ListView client width
+        private void AdjustListViewColumns()
+        {
+            if (tweaksList.Columns.Count < 2) return;
+
+            int totalWidth = tweaksList.ClientSize.Width;
+            tweaksList.Columns[0].Width = (int)(totalWidth * 0.3); // Tweak column
+            tweaksList.Columns[1].Width = (int)(totalWidth * 0.7); // Description column
         }
         private void InitializeDarkMode()
         {
@@ -359,8 +391,19 @@ namespace Perfect11
 
         private void tweaksList_Resize(object sender, EventArgs e)
         {
-            int totalWidth = tweaksList.ClientSize.Width;
-            tweaksList.Columns[0].Width = totalWidth;
+            AdjustListViewColumns();
+        }
+
+        private void githubLink_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start("https://github.com/theitaliandeveloper/Perfect11/");
+            }
+            catch
+            {
+                MessageBox.Show("Looks like your browser is not available, please copy the link below and paste it in your browser's address bar:\n\nhttps://github.com/theitaliandeveloper/Perfect11/","Perfect11",MessageBoxButtons.OK,MessageBoxIcon.Information);
+            }
         }
     }
 }
