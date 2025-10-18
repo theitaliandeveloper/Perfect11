@@ -5,6 +5,7 @@ using ReaLTaiizor.Enum.Poison;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,6 +51,11 @@ namespace Perfect11
                 tweaksList.Theme = ThemeStyle.Dark;
                 runTweaks.Theme = ThemeStyle.Dark;
                 editionLabel.Theme = ThemeStyle.Dark;
+                LstUWP.BackColor = Color.FromArgb(17, 17, 17);
+                LstUWPRemove.BackColor = Color.FromArgb(17, 17, 17);
+                tweaksList.BackColor = Color.FromArgb(17, 17, 17);
+                poisonLabel1.ForeColor = Color.FromArgb(255, 255, 255);
+                poisonLabel2.ForeColor = Color.FromArgb(255, 255, 255);
             }
             else
             {
@@ -73,6 +79,9 @@ namespace Perfect11
                 tweaksList.Theme = ThemeStyle.Light;
                 runTweaks.Theme = ThemeStyle.Light;
                 editionLabel.Theme = ThemeStyle.Light;
+                LstUWP.BackColor = Color.FromArgb(255,255,255);
+                LstUWPRemove.BackColor = Color.FromArgb(255,255,255);
+                tweaksList.BackColor = Color.FromArgb(255,255,255);
             }
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -80,6 +89,16 @@ namespace Perfect11
             pages.SelectedTab = welcomePage; // Always start from the first tab
             editionLabel.Text = AppEdition;
             theme.Text = AppEdition;
+            LstUWP.View = View.Details;
+            LstUWP.Columns.Clear();
+            LstUWP.Columns.Add("App Name", -2, HorizontalAlignment.Left);
+            LstUWPRemove.View = View.Details;
+            LstUWPRemove.Columns.Clear();
+            LstUWPRemove.Columns.Add("App Name", -2, HorizontalAlignment.Left);
+            int totalWidth1 = LstUWP.ClientSize.Width;
+            int totalWidth2 = LstUWPRemove.ClientSize.Width;
+            LstUWP.Columns[0].Width = totalWidth1;
+            LstUWPRemove.Columns[0].Width = totalWidth2;
         }
         private void GetUWP()
         {

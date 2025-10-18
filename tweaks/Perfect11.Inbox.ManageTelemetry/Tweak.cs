@@ -17,70 +17,70 @@ namespace Perfect11.Inbox.ManageTelemetry
         {
             void ControlService(string serviceName, string action)
             {
-            try
-            {
-                using (ServiceController sc = new ServiceController(serviceName))
+                try
                 {
-                    Console.WriteLine($"Service '{serviceName}' current status: {sc.Status}");
-
-                    switch (action.ToLower())
+                    using (ServiceController sc = new ServiceController(serviceName))
                     {
-                        case "start":
-                            if (sc.Status == ServiceControllerStatus.Stopped)
-                            {
-                                sc.Start();
-                                sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(10));
-                                Console.WriteLine("Service started successfully.");
-                            }
-                            else Console.WriteLine("Service is already running.");
-                            break;
+                        Console.WriteLine($"Service '{serviceName}' current status: {sc.Status}");
 
-                        case "stop":
-                            if (sc.Status == ServiceControllerStatus.Running)
-                            {
-                                sc.Stop();
-                                sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(10));
-                                Console.WriteLine("Service stopped successfully.");
-                            }
-                            else Console.WriteLine("Service is not running.");
-                            break;
+                        switch (action.ToLower())
+                        {
+                            case "start":
+                                if (sc.Status == ServiceControllerStatus.Stopped)
+                                {
+                                    sc.Start();
+                                    sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(10));
+                                    Console.WriteLine("Service started successfully.");
+                                }
+                                else Console.WriteLine("Service is already running.");
+                                break;
 
-                        case "restart":
-                            if (sc.Status == ServiceControllerStatus.Running)
-                            {
-                                sc.Stop();
-                                sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(10));
-                                sc.Start();
-                                sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(10));
-                                Console.WriteLine("Service restarted successfully.");
-                            }
-                            else
-                            {
-                                sc.Start();
-                                sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(10));
-                                Console.WriteLine("Service started successfully.");
-                            }
-                            break;
+                            case "stop":
+                                if (sc.Status == ServiceControllerStatus.Running)
+                                {
+                                    sc.Stop();
+                                    sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(10));
+                                    Console.WriteLine("Service stopped successfully.");
+                                }
+                                else Console.WriteLine("Service is not running.");
+                                break;
 
-                        default:
-                            Console.WriteLine("Invalid action. Use start | stop | restart");
-                            break;
+                            case "restart":
+                                if (sc.Status == ServiceControllerStatus.Running)
+                                {
+                                    sc.Stop();
+                                    sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(10));
+                                    sc.Start();
+                                    sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(10));
+                                    Console.WriteLine("Service restarted successfully.");
+                                }
+                                else
+                                {
+                                    sc.Start();
+                                    sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(10));
+                                    Console.WriteLine("Service started successfully.");
+                                }
+                                break;
+
+                            default:
+                                Console.WriteLine("Invalid action. Use start | stop | restart");
+                                break;
+                        }
                     }
                 }
+                catch (InvalidOperationException ex)
+                {
+                    throw new Exception($"Service '{serviceName}' not found or cannot be controlled: {ex.Message}");
+                }
+                catch (System.ServiceProcess.TimeoutException)
+                {
+                    throw new Exception("Operation timed out.");
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
             }
-            catch (InvalidOperationException ex)
-            {
-                throw new Exception($"Service '{serviceName}' not found or cannot be controlled: {ex.Message}");
-            }
-            catch (System.ServiceProcess.TimeoutException)
-            {
-                throw new Exception("Operation timed out.");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
             void SetServiceStartupType(string serviceName, string startupType)
             {
                 try

@@ -50,6 +50,7 @@
     <ProjectReference Include="..\..\Perfect11.TweaksInterface\Perfect11.TweaksInterface.csproj">
       <Project>{b3f8761a-b4b2-4378-9fe8-06bbfc39fce6}</Project>
       <Name>Perfect11.TweaksInterface</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
