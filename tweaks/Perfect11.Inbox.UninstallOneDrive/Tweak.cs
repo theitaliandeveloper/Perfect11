@@ -14,7 +14,8 @@ namespace Perfect11.Inbox.UninstallOneDrive
     {
         public string Name => "Uninstall OneDrive";
         public string Description => "Remove OneDrive from the system.";
-        public void Execute()
+        public string Category => "Apps";
+        public string Execute()
         {
             // --- Step 0: Check if OneDrive exists ---
             bool Exists()
@@ -165,8 +166,7 @@ namespace Perfect11.Inbox.UninstallOneDrive
 
             DeleteTask(@"\OneDrive Reporting Task");
             DeleteTask(@"\OneDrive Standalone Update Task");
-
-            Console.WriteLine("OneDrive has been completely removed.");
+            return "OneDrive uninstalled successfully.";
         }
     }
 }

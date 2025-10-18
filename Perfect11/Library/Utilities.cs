@@ -17,9 +17,9 @@ namespace Perfect11.Library
                 "CurrentBuildNumber", null);
             return int.TryParse(buildNumber, out int build) && build >= 22000;
         }
-        public static List<IPlugin> LoadTweaks(string path)
+        public static Dictionary<string, List<IPlugin>> LoadTweaks(string path)
         {
-            var plugins = new List<IPlugin>();
+            var categorizedPlugins = new Dictionary<string, List<IPlugin>>(StringComparer.OrdinalIgnoreCase);
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -33,11 +33,20 @@ namespace Perfect11.Library
                 foreach (var type in types)
                 {
                     if (Activator.CreateInstance(type) is IPlugin plugin)
-                        plugins.Add(plugin);
+                    {
+                        var category = string.IsNullOrEmpty(plugin.Category) ? "Uncategorized" : plugin.Category;
+
+                        if (!categorizedPlugins.ContainsKey(category))
+                        {
+                            categorizedPlugins[category] = new List<IPlugin>();
+                        }
+
+                        categorizedPlugins[category].Add(plugin);
+                    }
                 }
             }
 
-            return plugins;
+            return categorizedPlugins;
         }
         public static bool IsAppsDarkMode()
         {

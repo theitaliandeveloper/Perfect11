@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Perfect11
 {
@@ -272,25 +273,27 @@ namespace Perfect11
             {
                 File.Delete("Tweaks\\Perfect11.TweaksInterface.dll");
             }
+            var categorizedPlugins = Utilities.LoadTweaks(@"Tweaks");
             tweaksList.View = View.Details;
-            tweaksList.Columns.Add("Name", 150);
-            tweaksList.Columns.Add("Description", 300);
-            tweaksList.FullRowSelect = true;
+            tweaksList.Columns.Clear();
+            tweaksList.Columns.Add("Tweaks", -2, HorizontalAlignment.Left);
             int totalWidth = tweaksList.ClientSize.Width;
-            tweaksList.Columns[0].Width = (int)(totalWidth * 0.4);
-            tweaksList.Columns[1].Width = (int)(totalWidth * 0.6);
-
-            // Load plugins
-            _tweaks = Utilities.LoadTweaks("Tweaks");
-
-            // Populate ListView
-            foreach (var plugin in _tweaks)
+            tweaksList.Columns[0].Width = totalWidth;
+            tweaksList.Items.Clear();
+            tweaksList.Groups.Clear();
+            tweaksList.FullRowSelect = true;
+            foreach (var category in categorizedPlugins)
             {
-                var item = new ListViewItem(plugin.Name);
-                item.SubItems.Add(plugin.Description);
-                item.Tag = plugin; // store the plugin object for later
-                tweaksList.Items.Add(item);
+                var group = new ListViewGroup(category.Key);
+                tweaksList.Groups.Add(group);
+                foreach (var plugin in category.Value)
+                {
+                    var item = new ListViewItem(plugin.Name) { Group = group };
+                    item.Tag = plugin;
+                    tweaksList.Items.Add(item);
+                }
             }
+            tweaksList.ShowGroups = true;
             if (tweaksList.Items.Count == 0) runTweaks.Enabled = false;
         }
         private void InitializeDarkMode()
@@ -320,7 +323,8 @@ namespace Perfect11
                 {
                     if (item.Tag is IPlugin plugin)
                     {
-                        await Task.Run(() => plugin.Execute()); // run in background thread
+                        string result = await Task.Run(() => plugin.Execute()); // run in background thread
+                        MessageBox.Show(result,"Perfect11",MessageBoxButtons.OK,MessageBoxIcon.Information);
                     }
                 }
             }
@@ -337,8 +341,7 @@ namespace Perfect11
         private void tweaksList_Resize(object sender, EventArgs e)
         {
             int totalWidth = tweaksList.ClientSize.Width;
-            tweaksList.Columns[0].Width = (int)(totalWidth * 0.4);
-            tweaksList.Columns[1].Width = (int)(totalWidth * 0.6);
+            tweaksList.Columns[0].Width = totalWidth;
         }
     }
 }

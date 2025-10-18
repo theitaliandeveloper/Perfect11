@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11.TweaksInterface",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11.Inbox.UninstallOneDrive", "tweaks\Perfect11.Inbox.UninstallOneDrive\Perfect11.Inbox.UninstallOneDrive.csproj", "{AD55727D-A52C-459D-A316-3459AA80050A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11.Inbox.ManageTelemetry", "tweaks\Perfect11.Inbox.ManageTelemetry\Perfect11.Inbox.ManageTelemetry.csproj", "{2F175C96-FDBA-49D8-BE83-1998C1F75FA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{AD55727D-A52C-459D-A316-3459AA80050A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD55727D-A52C-459D-A316-3459AA80050A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD55727D-A52C-459D-A316-3459AA80050A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F175C96-FDBA-49D8-BE83-1998C1F75FA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F175C96-FDBA-49D8-BE83-1998C1F75FA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F175C96-FDBA-49D8-BE83-1998C1F75FA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F175C96-FDBA-49D8-BE83-1998C1F75FA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

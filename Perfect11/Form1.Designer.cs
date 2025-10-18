@@ -33,6 +33,7 @@
             this.controlBoxEdit1 = new ReaLTaiizor.Controls.ControlBoxEdit();
             this.pages = new ReaLTaiizor.Controls.PoisonTabControl();
             this.welcomePage = new ReaLTaiizor.Controls.PoisonTabPage();
+            this.editionLabel = new ReaLTaiizor.Controls.PoisonLabel();
             this.poisonLabel2 = new ReaLTaiizor.Controls.PoisonLabel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.poisonLabel1 = new ReaLTaiizor.Controls.PoisonLabel();
@@ -48,9 +49,8 @@
             this.addButton = new ReaLTaiizor.Controls.PoisonButton();
             this.LstUWP = new ReaLTaiizor.Controls.PoisonListView();
             this.tweaksPage = new ReaLTaiizor.Controls.PoisonTabPage();
-            this.tweaksList = new ReaLTaiizor.Controls.PoisonListView();
             this.runTweaks = new ReaLTaiizor.Controls.PoisonButton();
-            this.editionLabel = new ReaLTaiizor.Controls.PoisonLabel();
+            this.tweaksList = new ReaLTaiizor.Controls.PoisonListView();
             this.theme.SuspendLayout();
             this.pages.SuspendLayout();
             this.welcomePage.SuspendLayout();
@@ -97,7 +97,7 @@
             this.pages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pages.Location = new System.Drawing.Point(3, 28);
             this.pages.Name = "pages";
-            this.pages.SelectedIndex = 2;
+            this.pages.SelectedIndex = 0;
             this.pages.Size = new System.Drawing.Size(1323, 732);
             this.pages.TabIndex = 1;
             this.pages.UseSelectable = true;
@@ -112,7 +112,7 @@
             this.welcomePage.Controls.Add(this.poisonLabel1);
             this.welcomePage.HorizontalScrollbarBarColor = true;
             this.welcomePage.HorizontalScrollbarHighlightOnWheel = false;
-            this.welcomePage.HorizontalScrollbarSize = 11;
+            this.welcomePage.HorizontalScrollbarSize = 6;
             this.welcomePage.Location = new System.Drawing.Point(4, 38);
             this.welcomePage.Name = "welcomePage";
             this.welcomePage.Size = new System.Drawing.Size(1315, 690);
@@ -120,7 +120,17 @@
             this.welcomePage.Text = "Welcome";
             this.welcomePage.VerticalScrollbarBarColor = true;
             this.welcomePage.VerticalScrollbarHighlightOnWheel = false;
-            this.welcomePage.VerticalScrollbarSize = 45;
+            this.welcomePage.VerticalScrollbarSize = 31;
+            // 
+            // editionLabel
+            // 
+            this.editionLabel.AutoSize = true;
+            this.editionLabel.BackColor = System.Drawing.Color.Transparent;
+            this.editionLabel.Location = new System.Drawing.Point(16, 656);
+            this.editionLabel.Name = "editionLabel";
+            this.editionLabel.Size = new System.Drawing.Size(183, 20);
+            this.editionLabel.TabIndex = 4;
+            this.editionLabel.Text = "Perfect11 Community Edition";
             // 
             // poisonLabel2
             // 
@@ -128,7 +138,7 @@
             this.poisonLabel2.BackColor = System.Drawing.Color.Transparent;
             this.poisonLabel2.Location = new System.Drawing.Point(416, 379);
             this.poisonLabel2.Name = "poisonLabel2";
-            this.poisonLabel2.Size = new System.Drawing.Size(465, 38);
+            this.poisonLabel2.Size = new System.Drawing.Size(492, 40);
             this.poisonLabel2.TabIndex = 3;
             this.poisonLabel2.Text = "Perfect11 is a tool made by a guy who loves to optimize Windows.\r\nIt allows to in" +
     "stalls apps, remove bloatware, configure services and even more.";
@@ -170,7 +180,7 @@
             this.debloatPage.Controls.Add(this.LstUWP);
             this.debloatPage.HorizontalScrollbarBarColor = true;
             this.debloatPage.HorizontalScrollbarHighlightOnWheel = false;
-            this.debloatPage.HorizontalScrollbarSize = 11;
+            this.debloatPage.HorizontalScrollbarSize = 6;
             this.debloatPage.Location = new System.Drawing.Point(4, 38);
             this.debloatPage.Name = "debloatPage";
             this.debloatPage.Size = new System.Drawing.Size(1315, 690);
@@ -178,7 +188,7 @@
             this.debloatPage.Text = "Debloat";
             this.debloatPage.VerticalScrollbarBarColor = true;
             this.debloatPage.VerticalScrollbarHighlightOnWheel = false;
-            this.debloatPage.VerticalScrollbarSize = 28;
+            this.debloatPage.VerticalScrollbarSize = 19;
             // 
             // BtnRunUninstaller
             // 
@@ -216,7 +226,7 @@
             this.ChkShowUWPSystem.AutoSize = true;
             this.ChkShowUWPSystem.Location = new System.Drawing.Point(5, 650);
             this.ChkShowUWPSystem.Name = "ChkShowUWPSystem";
-            this.ChkShowUWPSystem.Size = new System.Drawing.Size(123, 15);
+            this.ChkShowUWPSystem.Size = new System.Drawing.Size(134, 17);
             this.ChkShowUWPSystem.TabIndex = 8;
             this.ChkShowUWPSystem.Text = "Show System Apps";
             this.ChkShowUWPSystem.UseSelectable = true;
@@ -303,7 +313,7 @@
             this.tweaksPage.Controls.Add(this.tweaksList);
             this.tweaksPage.HorizontalScrollbarBarColor = true;
             this.tweaksPage.HorizontalScrollbarHighlightOnWheel = false;
-            this.tweaksPage.HorizontalScrollbarSize = 10;
+            this.tweaksPage.HorizontalScrollbarSize = 6;
             this.tweaksPage.Location = new System.Drawing.Point(4, 38);
             this.tweaksPage.Name = "tweaksPage";
             this.tweaksPage.Size = new System.Drawing.Size(1315, 690);
@@ -311,7 +321,18 @@
             this.tweaksPage.Text = "Tweak";
             this.tweaksPage.VerticalScrollbarBarColor = true;
             this.tweaksPage.VerticalScrollbarHighlightOnWheel = false;
-            this.tweaksPage.VerticalScrollbarSize = 10;
+            this.tweaksPage.VerticalScrollbarSize = 7;
+            // 
+            // runTweaks
+            // 
+            this.runTweaks.FontSize = ReaLTaiizor.Extension.Poison.PoisonButtonSize.Medium;
+            this.runTweaks.Location = new System.Drawing.Point(1189, 633);
+            this.runTweaks.Name = "runTweaks";
+            this.runTweaks.Size = new System.Drawing.Size(121, 54);
+            this.runTweaks.TabIndex = 3;
+            this.runTweaks.Text = "Run Tweaks";
+            this.runTweaks.UseSelectable = true;
+            this.runTweaks.Click += new System.EventHandler(this.runTweaks_Click);
             // 
             // tweaksList
             // 
@@ -327,30 +348,9 @@
             this.tweaksList.UseSelectable = true;
             this.tweaksList.Resize += new System.EventHandler(this.tweaksList_Resize);
             // 
-            // runTweaks
-            // 
-            this.runTweaks.FontSize = ReaLTaiizor.Extension.Poison.PoisonButtonSize.Medium;
-            this.runTweaks.Location = new System.Drawing.Point(1189, 633);
-            this.runTweaks.Name = "runTweaks";
-            this.runTweaks.Size = new System.Drawing.Size(121, 54);
-            this.runTweaks.TabIndex = 3;
-            this.runTweaks.Text = "Run Tweaks";
-            this.runTweaks.UseSelectable = true;
-            this.runTweaks.Click += new System.EventHandler(this.runTweaks_Click);
-            // 
-            // editionLabel
-            // 
-            this.editionLabel.AutoSize = true;
-            this.editionLabel.BackColor = System.Drawing.Color.Transparent;
-            this.editionLabel.Location = new System.Drawing.Point(16, 656);
-            this.editionLabel.Name = "editionLabel";
-            this.editionLabel.Size = new System.Drawing.Size(175, 19);
-            this.editionLabel.TabIndex = 4;
-            this.editionLabel.Text = "Perfect11 Community Edition";
-            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(41)))), ((int)(((byte)(50)))));
             this.ClientSize = new System.Drawing.Size(1329, 788);
