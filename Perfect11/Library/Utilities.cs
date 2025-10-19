@@ -2,6 +2,7 @@
 using Perfect11.TweaksInterface;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -105,6 +106,11 @@ namespace Perfect11.Library
             {
                 return $"Error: {ex.Message}";
             }
+        }
+        public static string GetLanguageCode()
+        {
+            string languageCode = CultureInfo.CurrentUICulture.Name;
+            return languageCode.ToLower();
         }
     }
 }

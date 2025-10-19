@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Text.RegularExpressions;
 
 namespace Perfect11
 {
@@ -58,6 +58,13 @@ namespace Perfect11
                 poisonLabel1.ForeColor = Color.FromArgb(255, 255, 255);
                 poisonLabel2.ForeColor = Color.FromArgb(255, 255, 255);
                 githubLink.Theme = ThemeStyle.Dark;
+                upgradePage.Theme = ThemeStyle.Dark;
+                poisonLabel3.Theme = ThemeStyle.Dark;
+                poisonLabel4.Theme = ThemeStyle.Dark;
+                poisonLabel5.Theme = ThemeStyle.Dark;
+                upgradeMethod.Theme = ThemeStyle.Dark;
+                bypassWin11RequirementsCheck.Theme = ThemeStyle.Dark;
+                automateOOBECheck.Theme = ThemeStyle.Dark;
             }
             else
             {
@@ -85,6 +92,13 @@ namespace Perfect11
                 LstUWPRemove.BackColor = Color.FromArgb(255,255,255);
                 tweaksList.BackColor = Color.FromArgb(255,255,255);
                 githubLink.Theme = ThemeStyle.Light;
+                upgradePage.Theme = ThemeStyle.Light;
+                poisonLabel3.Theme = ThemeStyle.Light;
+                poisonLabel4.Theme = ThemeStyle.Light;
+                poisonLabel5.Theme = ThemeStyle.Light;
+                upgradeMethod.Theme = ThemeStyle.Light;
+                bypassWin11RequirementsCheck.Theme = ThemeStyle.Light;
+                automateOOBECheck.Theme = ThemeStyle.Light;
             }
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -403,6 +417,42 @@ namespace Perfect11
             catch
             {
                 MessageBox.Show("Looks like your browser is not available, please copy the link below and paste it in your browser's address bar:\n\nhttps://github.com/theitaliandeveloper/Perfect11/","Perfect11",MessageBoxButtons.OK,MessageBoxIcon.Information);
+            }
+        }
+
+        private void pages_SelectedIndexChanged(object sender, EventArgs e)
+        {
+#if !DEBUG // For UI Testing do not prevent using pages if not 11
+            if ((pages.SelectedTab == debloatPage || pages.SelectedTab == tweaksPage) && !Utilities.IsWindows11())
+            {
+                MessageBox.Show("In order to use these features you need to upgrade to Windows 11.","Perfect11",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                pages.SelectedTab = upgradePage;
+            }
+            else if (pages.SelectedTab == upgradePage && Utilities.IsWindows11())
+            {
+                if (MessageBox.Show("You're already using Windows 11, there's no need to upgrade. However, this page might be useful as well for reinstallation. Are you sure to continue?", "Perfect11", MessageBoxButtons.YesNo, MessageBoxIcon.Information,MessageBoxDefaultButton.Button2) == DialogResult.No)
+                {
+                    pages.SelectedTab = welcomePage;
+                }
+            }
+#endif
+        }
+
+        private void poisonComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (upgradeMethod.SelectedIndex == 3 || upgradeMethod.SelectedIndex == 2) // Both Mini11 and custom ISO
+            {
+                automateOOBECheck.Enabled = false;
+                bypassWin11RequirementsCheck.Enabled = false;
+            }
+            else if (upgradeMethod.SelectedIndex != 0) // if not normal installation
+            {
+                bypassWin11RequirementsCheck.Enabled = false;
+            }
+            else
+            {
+                automateOOBECheck.Enabled = true;
+                bypassWin11RequirementsCheck.Enabled = true;
             }
         }
     }
