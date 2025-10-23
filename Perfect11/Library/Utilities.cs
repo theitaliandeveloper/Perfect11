@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using DiscUtils.Udf;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using Perfect11.TweaksInterface;
 using System;
@@ -127,7 +128,7 @@ namespace Perfect11.Library
             {
                 if (stream == null)
                 {
-                    Console.WriteLine("❌ Risorsa non trovata: " + resourceName);
+                    Console.WriteLine("Resource not found: " + resourceName);
                     return new List<AppInfo>();
                 }
 
@@ -141,7 +142,7 @@ namespace Perfect11.Library
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("❌ Errore parsing JSON: " + ex.Message);
+                        Console.WriteLine("Error parsing JSON: " + ex.Message);
                         return new List<AppInfo>();
                     }
                 }

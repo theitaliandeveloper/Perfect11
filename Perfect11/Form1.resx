@@ -120,6 +120,14 @@
   <metadata name="controlBoxEdit1.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <data name="poisonLabel6.Text" xml:space="preserve">
+    <value>1. It's completely free and you can revert to Windows 10 if you don't like it
+2. Better security
+3. A new UI
+4. Better productivity
+5. Features for developers: Sudo and Dev Drives
+6. Compatible with all apps running on Windows 10</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

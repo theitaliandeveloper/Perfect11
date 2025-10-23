@@ -61,7 +61,40 @@ namespace Perfect11.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;unattend xmlns=&quot;urn:schemas-microsoft-com:unattend&quot;&gt;
+        ///    &lt;settings pass=&quot;oobeSystem&quot;&gt;
+        ///        &lt;component name=&quot;Microsoft-Windows-Shell-Setup&quot; processorArchitecture=&quot;amd64&quot; publicKeyToken=&quot;31bf3856ad364e35&quot; language=&quot;neutral&quot; versionScope=&quot;nonSxS&quot; xmlns:wcm=&quot;http://schemas.microsoft.com/WMIConfig/2002/State&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+        ///            &lt;OOBE&gt;
+        ///                &lt;HideEULAPage&gt;true&lt;/HideEULAPage&gt;
+        ///                &lt;HideOEMRegistrat [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string unattend_OOBEAutomate {
+            get {
+                return ResourceManager.GetString("unattend_OOBEAutomate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1527c705-839a-4832-9118-54d4Bd6a0c89
+        ///c5e2524a-ea46-4f67-841f-6a9465d9d515
+        ///E2A4F912-2574-4A75-9BB0-0D023378592B
+        ///F46D4000-FD22-4DB4-AC8E-4E1DDDE828FE
+        ///InputApp
+        ///Microsoft.AAD.BrokerPlugin
+        ///Microsoft.AccountsControl
+        ///Microsoft.Advertising.Xaml
+        ///Microsoft.AsyncTextService
+        ///Microsoft.BioEnrollment
+        ///Microsoft.CredDialogHost
+        ///Microsoft.ECApp
+        ///Microsoft.LockApp
+        ///Microsoft.MicrosoftEdge
+        ///Microsoft.MicrosoftEdgeDevToolsClient
+        ///Microsoft.NET
+        ///Microsoft.PPIProjection
+        ///Microsoft.Services.Store.Engagement
+        ///Microsoft.V [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string UWPSystemAppList {
             get {

@@ -12,6 +12,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Net.Http;
+using System.Threading;
+using DiscUtils.Udf;
+using System.Windows.Forms.Design;
 
 namespace Perfect11
 {
@@ -19,6 +23,10 @@ namespace Perfect11
     {
         private List<string> _listSystemApps = new List<string>();
         private List<IPlugin> _tweaks = new List<IPlugin>();
+        private CancellationTokenSource _cts;
+        private bool _isDownloading = false;
+        string url = $"https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26200.6584.250915-1905.25h2_ge_release_svc_refresh_CLIENT_CONSUMER_x64FRE_{Utilities.GetLanguageCode()}.iso";
+        string destination = Path.Combine(@"C:\Temp", @"windows.iso");
         private static string AppEdition = "Perfect11 Community Edition";
         public Form1()
         {
@@ -57,8 +65,6 @@ namespace Perfect11
                 LstUWP.BackColor = Color.FromArgb(17, 17, 17);
                 LstUWPRemove.BackColor = Color.FromArgb(17, 17, 17);
                 tweaksList.BackColor = Color.FromArgb(17, 17, 17);
-                poisonLabel1.ForeColor = Color.FromArgb(255, 255, 255);
-                poisonLabel2.ForeColor = Color.FromArgb(255, 255, 255);
                 githubLink.Theme = ThemeStyle.Dark;
                 upgradePage.Theme = ThemeStyle.Dark;
                 poisonLabel3.Theme = ThemeStyle.Dark;
@@ -67,6 +73,11 @@ namespace Perfect11
                 upgradeMethod.Theme = ThemeStyle.Dark;
                 bypassWin11RequirementsCheck.Theme = ThemeStyle.Dark;
                 automateOOBECheck.Theme = ThemeStyle.Dark;
+                poisonLabel6.Theme = ThemeStyle.Dark;
+                poisonLabel7.Theme = ThemeStyle.Dark;
+                upgradeButton.Theme = ThemeStyle.Dark;
+                statusLabel.Theme = ThemeStyle.Dark;
+                installProgress.Theme = ThemeStyle.Dark;
             }
             else
             {
@@ -101,6 +112,11 @@ namespace Perfect11
                 upgradeMethod.Theme = ThemeStyle.Light;
                 bypassWin11RequirementsCheck.Theme = ThemeStyle.Light;
                 automateOOBECheck.Theme = ThemeStyle.Light;
+                poisonLabel6.Theme = ThemeStyle.Light;
+                poisonLabel7.Theme = ThemeStyle.Light;
+                upgradeButton.Theme = ThemeStyle.Light;
+                statusLabel.Theme = ThemeStyle.Light;
+                installProgress.Theme = ThemeStyle.Light;
             }
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -118,6 +134,8 @@ namespace Perfect11
             int totalWidth2 = LstUWPRemove.ClientSize.Width;
             LstUWP.Columns[0].Width = totalWidth1;
             LstUWPRemove.Columns[0].Width = totalWidth2;
+            statusLabel.Visible = false;
+            installProgress.Visible = false;
         }
         private void GetUWP()
         {
@@ -425,6 +443,11 @@ namespace Perfect11
         private void pages_SelectedIndexChanged(object sender, EventArgs e)
         {
 #if !DEBUG // For UI Testing do not prevent using pages if not 11
+            if (pages.SelectedTab != upgradePage && _cts != null)
+            {
+                MessageBox.Show("Upgrade to Windows 11 is in progress, cannot change tab.", "Perfect11", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                pages.SelectedTab = upgradePage;
+            }
             if ((pages.SelectedTab == debloatPage || pages.SelectedTab == tweaksPage) && !Utilities.IsWindows11())
             {
                 MessageBox.Show("In order to use these features you need to upgrade to Windows 11.","Perfect11",MessageBoxButtons.OK,MessageBoxIcon.Information);
@@ -442,20 +465,277 @@ namespace Perfect11
 
         private void poisonComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            statusLabel.Text = "Ready.";
+            installProgress.Value = 0;
+            upgradeButton.Enabled = true;
+            statusLabel.Visible = true;
+            installProgress.Visible = true;
+            if (upgradeMethod.SelectedIndex == 3)
+            {
+                OpenFileDialog ofd = new OpenFileDialog
+                {
+                    Filter = "Disc Image File|*.iso",
+                    Title = "Select custom ISO",
+                    Multiselect = false
+                };
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    foreach (string fileName in ofd.FileNames)
+                    {
+                        destination = fileName;
+                    }
+                }
+                else
+                {
+                    upgradeMethod.SelectedIndex = 0;
+                }
+            }
             if (upgradeMethod.SelectedIndex == 3 || upgradeMethod.SelectedIndex == 2) // Both Mini11 and custom ISO
             {
                 automateOOBECheck.Enabled = false;
+                automateOOBECheck.Checked = false;
                 bypassWin11RequirementsCheck.Enabled = false;
+                bypassWin11RequirementsCheck.Checked = false;
             }
-            else if (upgradeMethod.SelectedIndex != 0) // if not normal installation
+            else if (upgradeMethod.SelectedIndex == 1) // Windows 11 LTSC
+            {
+                automateOOBECheck.Enabled = true;
+            }
+            if (upgradeMethod.SelectedIndex != 0) // if not normal installation
             {
                 bypassWin11RequirementsCheck.Enabled = false;
+                bypassWin11RequirementsCheck.Checked = false;
             }
             else
             {
                 automateOOBECheck.Enabled = true;
                 bypassWin11RequirementsCheck.Enabled = true;
+                bypassWin11RequirementsCheck.Checked = true;
             }
+        }
+
+        private async void upgradeButton_Click(object sender, EventArgs e)
+        {
+            if (upgradeMethod.SelectedIndex == 1)
+            {
+                url = "https://oemsoc.download.prss.microsoft.com/dbazure/X23-81951_26100.1742.240906-0331.ge_release_svc_refresh_CLIENT_ENTERPRISES_OEM_x64FRE_en-us.iso_640de540-87c4-427f-be87-e6d53a3a60b4?t=2c3b664b-b119-4088-9db1-ccff72c6d22e&P1=102816950270&P2=601&P3=2&P4=OC448onxqdmdUsBUApAiE8pj1FZ%2bEPTU3%2bC6Quq29MVwMyyDUtR%2fsbiy7RdVoZOHaZRndvzeOOnIwJZ2x3%2bmP6YK9cjJSP41Lvs0SulF4SVyL5C0DdDmiWqh2QW%2bcDPj2Xp%2bMrI9NOeElSBS5kkOWP8Eiyf2VkkQFM3g5vIk3HJVvu5sWo6pFKpFv4lML%2bHaIiTSuwbPMs5xwEQTfScuTKfigNlUZPdHRMp1B3uKLgIA3r0IbRpZgHYMXEwXQ%2fSLMdDNQthpqQvz1PThVkx7ObD55CXgt0GNSAWRfjdURWb8ywWk1gT7ozAgpP%2fKNm56U5nh33WZSuMZIuO1SBM2vw%3d%3d";
+            }
+            else if (upgradeMethod.SelectedIndex == 2)
+            {
+                url = "https://archive.org/download/mini11-24h2/Mini11%20LTS%2024H2%20AIO%20v1%20Triton.iso";
+            }
+#if !DEBUG
+            // Se stiamo già scaricando → annulla
+            if (_isDownloading)
+            {
+                if (_cts != null && !_cts.IsCancellationRequested)
+                {
+                    _cts.Cancel();
+                    statusLabel.Text = "Canceling...";
+                    upgradeButton.Enabled = false;
+                }
+                return;
+            }
+            try
+            {
+                upgradeMethod.Enabled = false;
+                bypassWin11RequirementsCheck.Enabled = false;
+                automateOOBECheck.Enabled = false;
+                string setupArguments = "";
+                installProgress.Value = 0;
+                upgradeButton.Text = "Cancel";
+                _isDownloading = true;
+                _cts = new CancellationTokenSource();
+                if (!Directory.Exists("C:\\Temp"))
+                    Directory.CreateDirectory("C:\\Temp");
+                if (upgradeMethod.SelectedIndex != 3)
+                {
+                    destination = Path.Combine(@"C:\Temp", @"windows.iso");
+                    statusLabel.Text = "Downloading ISO...";
+                    await DownloadFileAsync(url, destination, _cts.Token);
+                    statusLabel.Text = "Download completed!";
+                }
+                Thread.Sleep(1000);
+                statusLabel.Text = "Extracting...";
+                await Task.Run(() => ExtractIsoWithProgress(destination, Path.Combine(@"C:\Temp","Perfect11_W11_TMP"), _cts.Token));
+                statusLabel.Text = "Extraction complete!";
+                Thread.Sleep(1000);
+                if (automateOOBECheck.Checked)
+                {
+                    statusLabel.Text = "Applying OOBE automation tweak...";
+                    if (!Directory.Exists(Path.Combine(@"C:\Temp", @"Perfect11_W11_TMP\sources\$OEM$\$$\Panther")))
+                    {
+                        Directory.CreateDirectory(Path.Combine(@"C:\Temp", @"Perfect11_W11_TMP\sources\$OEM$\$$\Panther"));
+                    }
+                    if (File.Exists(Path.Combine(@"C:\Temp", @"Perfect11_W11_TMP\sources\$OEM$\$$\Panther\unattend.xml")))
+                    {
+                        File.Delete(Path.Combine(@"C:\Temp", @"Perfect11_W11_TMP\sources\$OEM$\$$\Panther\unattend.xml"));
+                    }
+                    File.WriteAllText(Path.Combine(@"C:\Temp", @"Perfect11_W11_TMP\sources\$OEM$\$$\Panther\unattend.xml"),Resources.unattend_OOBEAutomate);
+                }
+                statusLabel.Text = "Checking Windows 11 Setup... (ignore the Windows Server title and texts)";
+                if (bypassWin11RequirementsCheck.Checked)
+                {
+                    setupArguments += "/Product Server /Compat IgnoreWarning /MigrateDrivers All";
+                }
+                ProcessStartInfo info = new ProcessStartInfo
+                {
+                    FileName = Path.Combine(@"C:\Temp", @"Perfect11_W11_TMP\sources\setupprep.exe"),
+                    Arguments = setupArguments
+                };
+                using (var process = Process.Start(info))
+                {
+                    process?.WaitForExit();
+                }
+                _cts = null;
+                MessageBox.Show("Almost done! Now follow the prompts to continue the Windows 11 installation! Perfect11 will now close.","Perfect11",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                Application.Exit();
+            }
+            catch (OperationCanceledException)
+            {
+                statusLabel.Text = "Installation aborted!";
+                try
+                {
+                    if (File.Exists(destination))
+                        File.Delete(destination);
+                    if (Directory.Exists(Path.Combine(@"C:\Temp", "Perfect11_W11_TMP")))
+                        Directory.Delete(Path.Combine(@"C:\Temp", "Perfect11_W11_TMP"), true);
+                }
+                catch { }
+            }
+            catch (Exception ex)
+            {
+                statusLabel.Text = "Error: " + ex.Message;
+                try
+                {
+                    if (File.Exists(destination))
+                        File.Delete(destination);
+                    if (Directory.Exists(Path.Combine(@"C:\Temp", "Perfect11_W11_TMP")))
+                        Directory.Delete(Path.Combine(@"C:\Temp", "Perfect11_W11_TMP"), true);
+                } catch { }
+            }
+            finally
+            {
+                _isDownloading = false;
+                upgradeButton.Text = "Install";
+                upgradeButton.Enabled = true;
+                upgradeMethod.Enabled = true;
+                if (upgradeMethod.SelectedIndex == 3 || upgradeMethod.SelectedIndex == 2) // Both Mini11 and custom ISO
+                {
+                    automateOOBECheck.Enabled = false;
+                    automateOOBECheck.Checked = false;
+                    bypassWin11RequirementsCheck.Enabled = false;
+                    bypassWin11RequirementsCheck.Checked = false;
+                }
+                else if (upgradeMethod.SelectedIndex == 1) // Windows 11 LTSC
+                {
+                    automateOOBECheck.Enabled = true;
+                }
+                if (upgradeMethod.SelectedIndex != 0) // if not normal installation
+                {
+                    bypassWin11RequirementsCheck.Enabled = false;
+                    bypassWin11RequirementsCheck.Checked = false;
+                }
+                else
+                {
+                    automateOOBECheck.Enabled = true;
+                    bypassWin11RequirementsCheck.Enabled = true;
+                    bypassWin11RequirementsCheck.Checked = true;
+                }
+                _cts = null;
+            }
+#else
+            MessageBox.Show(destination + " " +  url, "Perfect11");
+#endif
+        }
+        public async Task DownloadFileAsync(string url, string destinationPath, CancellationToken token)
+        {
+            using (HttpClient client = new HttpClient { Timeout = TimeSpan.FromHours(2) })
+            using (HttpResponseMessage response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, token))
+            using (Stream contentStream = await response.Content.ReadAsStreamAsync())
+            using (FileStream fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+            {
+                long? totalBytes = response.Content.Headers.ContentLength;
+                long totalRead = 0;
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                DateTime lastUpdate = DateTime.Now;
+
+                while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
+                {
+                    await fileStream.WriteAsync(buffer, 0, bytesRead, token);
+                    totalRead += bytesRead;
+
+                    if (totalBytes.HasValue)
+                    {
+                        int progress = (int)((totalRead * 100L) / totalBytes.Value);
+                        if (progress > 100) progress = 100;
+
+                        installProgress.Value = progress;
+                        statusLabel.Text = $"ISO Download Progress: {progress}%";
+
+                        // Aggiorna la UI ogni ~200ms
+                        if ((DateTime.Now - lastUpdate).TotalMilliseconds > 200)
+                        {
+                            Application.DoEvents();
+                            lastUpdate = DateTime.Now;
+                        }
+                    }
+                }
+            }
+        }
+        private void ExtractIsoWithProgress(string isoPath, string extractPath, CancellationToken token)
+        {
+            if (!Directory.Exists(extractPath))
+            {
+                Directory.CreateDirectory(extractPath);
+            }
+            using (FileStream isoStream = File.OpenRead(isoPath))
+            {
+                UdfReader reader = new UdfReader(isoStream);
+
+                var allFiles = reader.GetFiles("", "*", SearchOption.AllDirectories).ToList();
+                int totalFiles = allFiles.Count;
+                int extractedCount = 0;
+
+                Invoke(new Action(() =>
+                {
+                    installProgress.Maximum = totalFiles;
+                    installProgress.Value = 0;
+                }));
+
+                foreach (string file in allFiles)
+                {
+                    token.ThrowIfCancellationRequested();
+
+                    // Percorso originale da UdfReader per aprire il file
+                    string sourcePath = file;
+
+                    // Percorso locale sul disco
+                    string localPath = Path.Combine(extractPath, file.TrimStart('/').Replace('/', '\\'));
+                    Directory.CreateDirectory(Path.GetDirectoryName(localPath));
+
+                    using (Stream src = reader.OpenFile(sourcePath, FileMode.Open))
+                    using (FileStream dst = File.Create(localPath))
+                    {
+                        src.CopyTo(dst);
+                    }
+
+                    extractedCount++;
+
+                    Invoke(new Action(() =>
+                    {
+                        installProgress.Value = extractedCount/totalFiles;
+                        statusLabel.Text = $"Extracting ({extractedCount}/{totalFiles})...";
+                    }));
+                }
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_cts != null)
+                e.Cancel = true;
         }
     }
 }
