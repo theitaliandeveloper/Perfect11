@@ -36,7 +36,9 @@ namespace Perfect11
                 welcomePage.Theme = ThemeStyle.Dark;
                 debloatPage.Theme = ThemeStyle.Dark;
                 poisonLabel1.Theme = ThemeStyle.Dark;
+                poisonLabel1.ForeColor = Color.FromArgb(255,255,255);
                 poisonLabel2.Theme = ThemeStyle.Dark;
+                poisonLabel2.ForeColor = Color.FromArgb(255, 255, 255);
                 LblInstalledCount.Theme = ThemeStyle.Dark;
                 LblRemoveCount.Theme = ThemeStyle.Dark;
                 LstUWP.Theme = ThemeStyle.Dark;

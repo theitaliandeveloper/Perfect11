@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Perfect11.Inbox.Spotlight")]
+[assembly: AssemblyTitle("Perfect11 Inbox Tweaks")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Perfect11.Inbox.Spotlight")]
-[assembly: AssemblyCopyright("Copyright ©  2025")]
+[assembly: AssemblyCompany("Vichingo455")]
+[assembly: AssemblyProduct("Perfect11")]
+[assembly: AssemblyCopyright("Copyright © 2025 Vichingo455")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

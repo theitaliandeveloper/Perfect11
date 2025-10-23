@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using Newtonsoft.Json;
 using Perfect11.TweaksInterface;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,12 @@ using System.Security.Principal;
 
 namespace Perfect11.Library
 {
+    public class AppInfo
+    {
+        public string Name { get; set; }
+        public string Id { get; set; }
+        public bool Install { get; set; }
+    }
     public class Utilities
     {
         public static bool IsWindows11()
@@ -111,6 +118,34 @@ namespace Perfect11.Library
         {
             string languageCode = CultureInfo.CurrentUICulture.Name;
             return languageCode.ToLower();
+        }
+        public static List<AppInfo> LoadApps(string resourceName)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                if (stream == null)
+                {
+                    Console.WriteLine("❌ Risorsa non trovata: " + resourceName);
+                    return new List<AppInfo>();
+                }
+
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string json = reader.ReadToEnd();
+                    try
+                    {
+                        var apps = JsonConvert.DeserializeObject<List<AppInfo>>(json);
+                        return apps ?? new List<AppInfo>();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("❌ Errore parsing JSON: " + ex.Message);
+                        return new List<AppInfo>();
+                    }
+                }
+            }
         }
     }
 }
