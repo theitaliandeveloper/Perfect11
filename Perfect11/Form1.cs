@@ -684,53 +684,196 @@ namespace Perfect11
                 }
             }
         }
+        // Assicurati di avere:
+        // using System.Text;
+
         private void ExtractIsoWithProgress(string isoPath, string extractPath, CancellationToken token)
         {
-            if (!Directory.Exists(extractPath))
-            {
-                Directory.CreateDirectory(extractPath);
-            }
+            // Log file per diagnosticare i file che falliscono
+            string logPath = Path.Combine(Path.GetDirectoryName(isoPath) ?? ".", "extract_errors.log");
+            File.WriteAllText(logPath, $"Extraction started: {DateTime.Now}\r\n");
+
             using (FileStream isoStream = File.OpenRead(isoPath))
             {
-                UdfReader reader = new UdfReader(isoStream);
+                object reader = null;
+                bool isUdf = false;
 
-                var allFiles = reader.GetFiles("", "*", SearchOption.AllDirectories).ToList();
-                int totalFiles = allFiles.Count;
+                // Provo prima UDF, poi ISO9660/Joliet (CDReader)
+                try
+                {
+                    reader = new DiscUtils.Udf.UdfReader(isoStream);
+                    isUdf = true;
+                }
+                catch (Exception exUdf)
+                {
+                    try
+                    {
+                        // rewind stream and try CDReader
+                        isoStream.Seek(0, SeekOrigin.Begin);
+                        reader = new DiscUtils.Iso9660.CDReader(isoStream, true);
+                        isUdf = false;
+                    }
+                    catch (Exception exCd)
+                    {
+                        File.AppendAllText(logPath, $"Failed to open ISO with Udf ({exUdf.Message}) and CDReader ({exCd.Message})\r\n");
+                        throw new Exception("Unable to open ISO with UDF or ISO9660 readers. See log for details.");
+                    }
+                }
+
+                // Ottieni file list (entrambi supportano GetFiles con stessa signature)
+                var allFiles = (reader as dynamic).GetFiles("", "*", SearchOption.AllDirectories) as IEnumerable<string>;
+                var filesList = allFiles.ToList();
+                int totalFiles = filesList.Count;
                 int extractedCount = 0;
 
+                // Imposta progress bar
                 Invoke(new Action(() =>
                 {
-                    installProgress.Maximum = totalFiles;
+                    installProgress.Maximum = Math.Max(1, totalFiles);
                     installProgress.Value = 0;
                 }));
 
-                foreach (string file in allFiles)
+                foreach (string rawFile in filesList)
                 {
                     token.ThrowIfCancellationRequested();
 
-                    // Percorso originale da UdfReader per aprire il file
-                    string sourcePath = file;
+                    string sourcePath = rawFile; // il percorso così com'è per il reader
+                                                 // Costruiamo il percorso locale su disco (convertendo slash)
+                    string localRelative = sourcePath.TrimStart('/', '\\').Replace('/', Path.DirectorySeparatorChar);
+                    string destination = Path.Combine(extractPath, localRelative);
 
-                    // Percorso locale sul disco
-                    string localPath = Path.Combine(extractPath, file.TrimStart('/').Replace('/', '\\'));
-                    Directory.CreateDirectory(Path.GetDirectoryName(localPath));
-
-                    using (Stream src = reader.OpenFile(sourcePath, FileMode.Open))
-                    using (FileStream dst = File.Create(localPath))
+                    try
                     {
-                        src.CopyTo(dst);
+                        // Crea directory di destinazione
+                        string dir = Path.GetDirectoryName(destination);
+                        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                            Directory.CreateDirectory(dir);
+
+                        // Proviamo ad aprire il file con varie strategie
+                        Stream srcStream = TryOpenFileWithVariants(reader, sourcePath, logPath);
+                        if (srcStream == null)
+                        {
+                            // se non siamo riusciti ad aprire, logga e continua
+                            File.AppendAllText(logPath, $"[SKIP] Could not open: '{sourcePath}'\r\n");
+                            extractedCount++;
+                            Invoke(new Action(() =>
+                            {
+                                installProgress.Value = extractedCount;
+                                statusLabel.Text = $"Skipped: ({extractedCount}/{totalFiles})";
+                            }));
+                            continue;
+                        }
+
+                        // Copia stream su file
+                        using (srcStream)
+                        using (FileStream dst = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.None))
+                        {
+                            srcStream.CopyTo(dst);
+                        }
+
+                        extractedCount++;
+                        Invoke(new Action(() =>
+                        {
+                            installProgress.Value = extractedCount;
+                            statusLabel.Text = $"Extracted ({extractedCount}/{totalFiles})";
+                        }));
                     }
-
-                    extractedCount++;
-
-                    Invoke(new Action(() =>
+                    catch (OperationCanceledException)
                     {
-                        installProgress.Value = extractedCount/totalFiles;
-                        statusLabel.Text = $"Extracting ({extractedCount}/{totalFiles})...";
-                    }));
+                        // rilanciamo per la chiamante
+                        throw;
+                    }
+                    catch (Exception exFile)
+                    {
+                        File.AppendAllText(logPath, $"[ERROR] File: '{sourcePath}' -> {exFile.GetType().Name}: {exFile.Message}\r\n");
+                        extractedCount++;
+                        Invoke(new Action(() =>
+                        {
+                            installProgress.Value = extractedCount;
+                            statusLabel.Text = $"Error at ({extractedCount}/{totalFiles})";
+                        }));
+                    }
                 }
+
+                File.AppendAllText(logPath, $"Extraction finished: {DateTime.Now}\r\n");
             }
         }
+
+        /// <summary>
+        /// Tenta di aprire il file usando diverse varianti del percorso richiesto dal reader.
+        /// Restituisce lo Stream se riesce, altrimenti null.
+        /// </summary>
+        private Stream TryOpenFileWithVariants(object reader, string originalPath, string logPath)
+        {
+            // Normalizzazioni da provare
+            var candidates = new List<string>();
+
+            // percorso così com'è (probabilmente con '/')
+            candidates.Add(originalPath);
+
+            // versione senza slash iniziale
+            if (originalPath.StartsWith("/") || originalPath.StartsWith("\\"))
+                candidates.Add(originalPath.TrimStart('/', '\\'));
+
+            // con slash iniziale
+            if (!originalPath.StartsWith("/"))
+                candidates.Add("/" + originalPath.TrimStart('/', '\\'));
+
+            // replace slash/backslash
+            candidates.Add(originalPath.Replace('\\', '/'));
+            candidates.Add(originalPath.Replace('/', '\\'));
+
+            // varianti con normalizzazione Unicode (Form C)
+            try
+            {
+                string normalized = originalPath.Normalize(System.Text.NormalizationForm.FormC);
+                if (!candidates.Contains(normalized))
+                    candidates.Add(normalized);
+            }
+            catch { /* ignore */ }
+
+            // proviamo le candidate una alla volta
+            foreach (string p in candidates.Distinct())
+            {
+                try
+                {
+                    // alcuni reader richiedono stringa con '/', altri accettano entrambe;
+                    // usiamo dynamic per chiamare OpenFile
+                    var rdr = reader as dynamic;
+                    Stream s = null;
+
+                    // Proviamo prima con (string, FileMode.Open)
+                    try
+                    {
+                        s = rdr.OpenFile(p, FileMode.Open);
+                    }
+                    catch
+                    {
+                        // se sbaglia, proviamo a chiamare senza FileMode (alcune versioni hanno overload diverso)
+                        try
+                        {
+                            s = rdr.OpenFile(p);
+                        }
+                        catch
+                        {
+                            s = null;
+                        }
+                    }
+
+                    if (s != null)
+                        return s;
+                }
+                catch (Exception ex)
+                {
+                    // loggare l'eccezione ma continuiamo con altre varianti
+                    File.AppendAllText(logPath, $"[TRY FAILED] '{p}' => {ex.Message}\r\n");
+                }
+            }
+
+            // non abbiamo trovato nulla
+            return null;
+        }
+
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
