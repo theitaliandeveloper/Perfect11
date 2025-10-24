@@ -61,6 +61,18 @@ namespace Perfect11.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [Channel]
+        ///OEM
+        ///[VL]
+        ///0.
+        /// </summary>
+        internal static string EI_CFG {
+            get {
+                return ResourceManager.GetString("EI_CFG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;unattend xmlns=&quot;urn:schemas-microsoft-com:unattend&quot;&gt;
         ///    &lt;settings pass=&quot;oobeSystem&quot;&gt;

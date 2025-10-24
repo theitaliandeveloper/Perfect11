@@ -9,13 +9,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
-using System.Net.Http;
-using System.Threading;
-using DiscUtils.Udf;
-using System.Windows.Forms.Design;
 
 namespace Perfect11
 {
@@ -497,11 +496,7 @@ namespace Perfect11
                 bypassWin11RequirementsCheck.Enabled = false;
                 bypassWin11RequirementsCheck.Checked = false;
             }
-            else if (upgradeMethod.SelectedIndex == 1) // Windows 11 LTSC
-            {
-                automateOOBECheck.Enabled = true;
-            }
-            if (upgradeMethod.SelectedIndex != 0) // if not normal installation
+            if (upgradeMethod.SelectedIndex != 0 && upgradeMethod.SelectedIndex != 1) // if not normal installation
             {
                 bypassWin11RequirementsCheck.Enabled = false;
                 bypassWin11RequirementsCheck.Checked = false;
@@ -524,7 +519,6 @@ namespace Perfect11
             {
                 url = "https://archive.org/download/mini11-24h2/Mini11%20LTS%2024H2%20AIO%20v1%20Triton.iso";
             }
-#if !DEBUG
             // Se stiamo già scaricando → annulla
             if (_isDownloading)
             {
@@ -548,6 +542,10 @@ namespace Perfect11
                 _cts = new CancellationTokenSource();
                 if (!Directory.Exists("C:\\Temp"))
                     Directory.CreateDirectory("C:\\Temp");
+                if (Directory.Exists("C:\\Temp\\Perfect11_W11_TMP"))
+                    Directory.Delete("C:\\Temp\\Perfect11_W11_TMP",true);
+                if (File.Exists("C:\\Temp\\windows.iso"))
+                    File.Delete("C:\\Temp\\windows.iso");
                 if (upgradeMethod.SelectedIndex != 3)
                 {
                     destination = Path.Combine(@"C:\Temp", @"windows.iso");
@@ -557,36 +555,42 @@ namespace Perfect11
                 }
                 Thread.Sleep(1000);
                 statusLabel.Text = "Extracting...";
-                await Task.Run(() => ExtractIsoWithProgress(destination, Path.Combine(@"C:\Temp","Perfect11_W11_TMP"), _cts.Token));
+                await Task.Run(() => ExtractIsoWithProgress(destination, @"C:\Temp\Perfect11_W11_TMP", _cts.Token));
                 statusLabel.Text = "Extraction complete!";
+#if !DEBUG
+                if (File.Exists(destination) && upgradeMethod.SelectedIndex != 3)
+                    File.Delete(destination);
+#endif
+                if (!File.Exists(@"C:\Temp\Perfect11_W11_TMP\sources\EI.cfg"))
+                {
+                    File.WriteAllText(@"C:\Temp\Perfect11_W11_TMP\sources\EI.CFG",Resources.EI_CFG);
+                }
                 Thread.Sleep(1000);
                 if (automateOOBECheck.Checked)
                 {
                     statusLabel.Text = "Applying OOBE automation tweak...";
-                    if (!Directory.Exists(Path.Combine(@"C:\Temp", @"Perfect11_W11_TMP\sources\$OEM$\$$\Panther")))
+                    if (File.Exists(@"C:\Temp\Perfect11_W11_TMP\autounattend.xml"))
                     {
-                        Directory.CreateDirectory(Path.Combine(@"C:\Temp", @"Perfect11_W11_TMP\sources\$OEM$\$$\Panther"));
+                        File.Delete(@"C:\Temp\Perfect11_W11_TMP\autounattend.xml");
                     }
-                    if (File.Exists(Path.Combine(@"C:\Temp", @"Perfect11_W11_TMP\sources\$OEM$\$$\Panther\unattend.xml")))
-                    {
-                        File.Delete(Path.Combine(@"C:\Temp", @"Perfect11_W11_TMP\sources\$OEM$\$$\Panther\unattend.xml"));
-                    }
-                    File.WriteAllText(Path.Combine(@"C:\Temp", @"Perfect11_W11_TMP\sources\$OEM$\$$\Panther\unattend.xml"),Resources.unattend_OOBEAutomate);
+                    File.WriteAllText(@"C:\Temp\Perfect11_W11_TMP\autounattend.xml",Resources.unattend_OOBEAutomate);
                 }
-                statusLabel.Text = "Checking Windows 11 Setup... (ignore the Windows Server title and texts)";
+                statusLabel.Text = "Running Windows 11 Setup...";
                 if (bypassWin11RequirementsCheck.Checked)
                 {
-                    setupArguments += "/Product Server /Compat IgnoreWarning /MigrateDrivers All";
+                    setupArguments += "/Product Server";
                 }
+                if (upgradeMethod.SelectedIndex == 2)
+                {
+                    setupArguments += "/pkey KBN8V-HFGQ4-MGXVD-347P6-PDQGT";
+                }
+                setupArguments += " /Compat IgnoreWarning /MigrateDrivers All /Telemetry disable /eula accept /dynamicupdate enable";
                 ProcessStartInfo info = new ProcessStartInfo
                 {
-                    FileName = Path.Combine(@"C:\Temp", @"Perfect11_W11_TMP\sources\setupprep.exe"),
+                    FileName = @"C:\Temp\Perfect11_W11_TMP\sources\setupprep.exe",
                     Arguments = setupArguments
                 };
-                using (var process = Process.Start(info))
-                {
-                    process?.WaitForExit();
-                }
+                Process.Start(info);
                 _cts = null;
                 MessageBox.Show("Almost done! Now follow the prompts to continue the Windows 11 installation! Perfect11 will now close.","Perfect11",MessageBoxButtons.OK,MessageBoxIcon.Information);
                 Application.Exit();
@@ -596,10 +600,12 @@ namespace Perfect11
                 statusLabel.Text = "Installation aborted!";
                 try
                 {
-                    if (File.Exists(destination))
+#if !DEBUG
+                    if (File.Exists(destination) && upgradeMethod.SelectedIndex != 3)
                         File.Delete(destination);
                     if (Directory.Exists(Path.Combine(@"C:\Temp", "Perfect11_W11_TMP")))
                         Directory.Delete(Path.Combine(@"C:\Temp", "Perfect11_W11_TMP"), true);
+#endif
                 }
                 catch { }
             }
@@ -608,10 +614,12 @@ namespace Perfect11
                 statusLabel.Text = "Error: " + ex.Message;
                 try
                 {
-                    if (File.Exists(destination))
+#if !DEBUG
+                    if (File.Exists(destination) && upgradeMethod.SelectedIndex != 3)
                         File.Delete(destination);
                     if (Directory.Exists(Path.Combine(@"C:\Temp", "Perfect11_W11_TMP")))
                         Directory.Delete(Path.Combine(@"C:\Temp", "Perfect11_W11_TMP"), true);
+#endif
                 } catch { }
             }
             finally
@@ -627,11 +635,7 @@ namespace Perfect11
                     bypassWin11RequirementsCheck.Enabled = false;
                     bypassWin11RequirementsCheck.Checked = false;
                 }
-                else if (upgradeMethod.SelectedIndex == 1) // Windows 11 LTSC
-                {
-                    automateOOBECheck.Enabled = true;
-                }
-                if (upgradeMethod.SelectedIndex != 0) // if not normal installation
+                if (upgradeMethod.SelectedIndex != 0 && upgradeMethod.SelectedIndex != 1) // if not normal installation
                 {
                     bypassWin11RequirementsCheck.Enabled = false;
                     bypassWin11RequirementsCheck.Checked = false;
@@ -644,9 +648,6 @@ namespace Perfect11
                 }
                 _cts = null;
             }
-#else
-            MessageBox.Show(destination + " " +  url, "Perfect11");
-#endif
         }
         public async Task DownloadFileAsync(string url, string destinationPath, CancellationToken token)
         {
@@ -684,194 +685,66 @@ namespace Perfect11
                 }
             }
         }
-        // Assicurati di avere:
-        // using System.Text;
 
-        private void ExtractIsoWithProgress(string isoPath, string extractPath, CancellationToken token)
+        private async Task ExtractIsoWithProgress(string isoPath, string extractPath, CancellationToken token)
         {
-            // Log file per diagnosticare i file che falliscono
-            string logPath = Path.Combine(Path.GetDirectoryName(isoPath) ?? ".", "extract_errors.log");
-            File.WriteAllText(logPath, $"Extraction started: {DateTime.Now}\r\n");
+            string sevenZipPath = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), @"Tools\7z.exe");
+            if (!File.Exists(sevenZipPath))
+                throw new FileNotFoundException("7-Zip not found.");
 
-            using (FileStream isoStream = File.OpenRead(isoPath))
+            ProcessStartInfo psi = new ProcessStartInfo
             {
-                object reader = null;
-                bool isUdf = false;
+                FileName = sevenZipPath,
+                Arguments = $"x -o\"{extractPath}\" -y -bsp1 -bso1 \"{isoPath}\"",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
 
-                // Provo prima UDF, poi ISO9660/Joliet (CDReader)
-                try
-                {
-                    reader = new DiscUtils.Udf.UdfReader(isoStream);
-                    isUdf = true;
-                }
-                catch (Exception exUdf)
-                {
-                    try
-                    {
-                        // rewind stream and try CDReader
-                        isoStream.Seek(0, SeekOrigin.Begin);
-                        reader = new DiscUtils.Iso9660.CDReader(isoStream, true);
-                        isUdf = false;
-                    }
-                    catch (Exception exCd)
-                    {
-                        File.AppendAllText(logPath, $"Failed to open ISO with Udf ({exUdf.Message}) and CDReader ({exCd.Message})\r\n");
-                        throw new Exception("Unable to open ISO with UDF or ISO9660 readers. See log for details.");
-                    }
-                }
+            using (Process proc = new Process { StartInfo = psi })
+            {
+                proc.Start();
 
-                // Ottieni file list (entrambi supportano GetFiles con stessa signature)
-                var allFiles = (reader as dynamic).GetFiles("", "*", SearchOption.AllDirectories) as IEnumerable<string>;
-                var filesList = allFiles.ToList();
-                int totalFiles = filesList.Count;
-                int extractedCount = 0;
+                string line;
+                int lastPercent = 0;
+                var regex = new Regex(@"(\d+)%");
 
-                // Imposta progress bar
                 Invoke(new Action(() =>
                 {
-                    installProgress.Maximum = Math.Max(1, totalFiles);
                     installProgress.Value = 0;
+                    statusLabel.Text = "Extracting files...";
                 }));
-
-                foreach (string rawFile in filesList)
+                await Task.Run(() =>
                 {
-                    token.ThrowIfCancellationRequested();
-
-                    string sourcePath = rawFile; // il percorso così com'è per il reader
-                                                 // Costruiamo il percorso locale su disco (convertendo slash)
-                    string localRelative = sourcePath.TrimStart('/', '\\').Replace('/', Path.DirectorySeparatorChar);
-                    string destination = Path.Combine(extractPath, localRelative);
-
-                    try
+                    while (!proc.HasExited)
                     {
-                        // Crea directory di destinazione
-                        string dir = Path.GetDirectoryName(destination);
-                        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-                            Directory.CreateDirectory(dir);
+                        token.ThrowIfCancellationRequested();
 
-                        // Proviamo ad aprire il file con varie strategie
-                        Stream srcStream = TryOpenFileWithVariants(reader, sourcePath, logPath);
-                        if (srcStream == null)
-                        {
-                            // se non siamo riusciti ad aprire, logga e continua
-                            File.AppendAllText(logPath, $"[SKIP] Could not open: '{sourcePath}'\r\n");
-                            extractedCount++;
-                            Invoke(new Action(() =>
-                            {
-                                installProgress.Value = extractedCount;
-                                statusLabel.Text = $"Skipped: ({extractedCount}/{totalFiles})";
-                            }));
+                        line = proc.StandardOutput.ReadLine();
+                        if (line == null)
                             continue;
+
+                        var match = regex.Match(line);
+                        if (match.Success)
+                        {
+                            int percent = int.Parse(match.Groups[1].Value);
+                            if (percent != lastPercent)
+                            {
+                                lastPercent = percent;
+                                Invoke(new Action(() =>
+                                {
+                                    installProgress.Value = percent;
+                                    statusLabel.Text = $"Extracting... {percent}%";
+                                }));
+                            }
                         }
-
-                        // Copia stream su file
-                        using (srcStream)
-                        using (FileStream dst = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.None))
-                        {
-                            srcStream.CopyTo(dst);
-                        }
-
-                        extractedCount++;
-                        Invoke(new Action(() =>
-                        {
-                            installProgress.Value = extractedCount;
-                            statusLabel.Text = $"Extracted ({extractedCount}/{totalFiles})";
-                        }));
                     }
-                    catch (OperationCanceledException)
-                    {
-                        // rilanciamo per la chiamante
-                        throw;
-                    }
-                    catch (Exception exFile)
-                    {
-                        File.AppendAllText(logPath, $"[ERROR] File: '{sourcePath}' -> {exFile.GetType().Name}: {exFile.Message}\r\n");
-                        extractedCount++;
-                        Invoke(new Action(() =>
-                        {
-                            installProgress.Value = extractedCount;
-                            statusLabel.Text = $"Error at ({extractedCount}/{totalFiles})";
-                        }));
-                    }
-                }
+                }, token);
+                proc.WaitForExit();
 
-                File.AppendAllText(logPath, $"Extraction finished: {DateTime.Now}\r\n");
+                if (proc.ExitCode != 0)
+                    throw new Exception($"7-Zip exited with code {proc.ExitCode}");
             }
-        }
-
-        /// <summary>
-        /// Tenta di aprire il file usando diverse varianti del percorso richiesto dal reader.
-        /// Restituisce lo Stream se riesce, altrimenti null.
-        /// </summary>
-        private Stream TryOpenFileWithVariants(object reader, string originalPath, string logPath)
-        {
-            // Normalizzazioni da provare
-            var candidates = new List<string>();
-
-            // percorso così com'è (probabilmente con '/')
-            candidates.Add(originalPath);
-
-            // versione senza slash iniziale
-            if (originalPath.StartsWith("/") || originalPath.StartsWith("\\"))
-                candidates.Add(originalPath.TrimStart('/', '\\'));
-
-            // con slash iniziale
-            if (!originalPath.StartsWith("/"))
-                candidates.Add("/" + originalPath.TrimStart('/', '\\'));
-
-            // replace slash/backslash
-            candidates.Add(originalPath.Replace('\\', '/'));
-            candidates.Add(originalPath.Replace('/', '\\'));
-
-            // varianti con normalizzazione Unicode (Form C)
-            try
-            {
-                string normalized = originalPath.Normalize(System.Text.NormalizationForm.FormC);
-                if (!candidates.Contains(normalized))
-                    candidates.Add(normalized);
-            }
-            catch { /* ignore */ }
-
-            // proviamo le candidate una alla volta
-            foreach (string p in candidates.Distinct())
-            {
-                try
-                {
-                    // alcuni reader richiedono stringa con '/', altri accettano entrambe;
-                    // usiamo dynamic per chiamare OpenFile
-                    var rdr = reader as dynamic;
-                    Stream s = null;
-
-                    // Proviamo prima con (string, FileMode.Open)
-                    try
-                    {
-                        s = rdr.OpenFile(p, FileMode.Open);
-                    }
-                    catch
-                    {
-                        // se sbaglia, proviamo a chiamare senza FileMode (alcune versioni hanno overload diverso)
-                        try
-                        {
-                            s = rdr.OpenFile(p);
-                        }
-                        catch
-                        {
-                            s = null;
-                        }
-                    }
-
-                    if (s != null)
-                        return s;
-                }
-                catch (Exception ex)
-                {
-                    // loggare l'eccezione ma continuiamo con altre varianti
-                    File.AppendAllText(logPath, $"[TRY FAILED] '{p}' => {ex.Message}\r\n");
-                }
-            }
-
-            // non abbiamo trovato nulla
-            return null;
         }
 
 
