@@ -580,11 +580,19 @@ namespace Perfect11
                 {
                     setupArguments += "/Product Server";
                 }
-                if (upgradeMethod.SelectedIndex == 2)
+                if (upgradeMethod.SelectedIndex == 1)
                 {
                     setupArguments += "/pkey KBN8V-HFGQ4-MGXVD-347P6-PDQGT";
                 }
-                setupArguments += " /Compat IgnoreWarning /MigrateDrivers All /Telemetry disable /eula accept /dynamicupdate enable";
+                setupArguments += " /Compat IgnoreWarning /Telemetry disable /eula accept";
+                if (upgradeMethod.SelectedIndex == 2)
+                {
+                    setupArguments += " /dynamicupdate disable";
+                }
+                else
+                {
+                    setupArguments += " /dynamicupdate enable";
+                }
                 ProcessStartInfo info = new ProcessStartInfo
                 {
                     FileName = @"C:\Temp\Perfect11_W11_TMP\sources\setupprep.exe",
