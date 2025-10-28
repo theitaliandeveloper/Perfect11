@@ -24,6 +24,17 @@ namespace Perfect11
 #else
             Application.ThreadException += (s, e) => { };
 #endif
+            if (Utilities.GetSystemArchitecture().ToLower() == "x86")
+            {
+                MessageBox.Show("You're running on Windows 32 bits, this program requires Windows 64 bits.","Perfect11",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                return;
+            }
+            else if (Utilities.GetSystemArchitecture().ToLower() == "a64")
+            {
+                var dialog = MessageBox.Show("You're running Windows on ARM. ARM64 support for this tool is experimental, and not everything will work fine. Are you sure to continue?","Perfect11",MessageBoxButtons.YesNo,MessageBoxIcon.Warning,MessageBoxDefaultButton.Button2);
+                if (dialog == DialogResult.No)
+                    return;
+            }
             Application.Run(new Form1());
         }
     }

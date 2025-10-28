@@ -24,7 +24,7 @@ namespace Perfect11
         private List<IPlugin> _tweaks = new List<IPlugin>();
         private CancellationTokenSource _cts;
         private bool _isDownloading = false;
-        string url = $"https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26200.6584.250915-1905.25h2_ge_release_svc_refresh_CLIENT_CONSUMER_x64FRE_{Utilities.GetLanguageCode()}.iso";
+        string url = $"https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26200.6584.250915-1905.25h2_ge_release_svc_refresh_CLIENT_CONSUMER_{Utilities.GetSystemArchitecture()}FRE_{Utilities.GetLanguageCode()}.iso";
         string destination = Path.Combine(@"C:\Temp", @"windows.iso");
         private static string AppEdition = "Perfect11 Community Edition";
         public Form1()
@@ -464,6 +464,11 @@ namespace Perfect11
 
         private void poisonComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (Utilities.GetSystemArchitecture().ToLower() == "a64" && upgradeMethod.SelectedIndex != 0 && upgradeMethod.SelectedIndex != 3)
+            {
+                upgradeMethod.SelectedIndex = 0;
+                MessageBox.Show("You're running Windows on ARM, some options are not available.", "Perfect11", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
             statusLabel.Text = "Ready.";
             installProgress.Value = 0;
             upgradeButton.Enabled = true;
@@ -582,7 +587,7 @@ namespace Perfect11
                 }
                 if (upgradeMethod.SelectedIndex == 1)
                 {
-                    setupArguments += "/pkey KBN8V-HFGQ4-MGXVD-347P6-PDQGT";
+                    setupArguments += " /pkey KBN8V-HFGQ4-MGXVD-347P6-PDQGT";
                 }
                 setupArguments += " /Compat IgnoreWarning /Telemetry disable /eula accept";
                 if (upgradeMethod.SelectedIndex == 2)
@@ -669,21 +674,16 @@ namespace Perfect11
                 byte[] buffer = new byte[8192];
                 int bytesRead;
                 DateTime lastUpdate = DateTime.Now;
-
                 while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
                 {
                     await fileStream.WriteAsync(buffer, 0, bytesRead, token);
                     totalRead += bytesRead;
-
                     if (totalBytes.HasValue)
                     {
                         int progress = (int)((totalRead * 100L) / totalBytes.Value);
                         if (progress > 100) progress = 100;
-
                         installProgress.Value = progress;
                         statusLabel.Text = $"ISO Download Progress: {progress}%";
-
-                        // Aggiorna la UI ogni ~200ms
                         if ((DateTime.Now - lastUpdate).TotalMilliseconds > 200)
                         {
                             Application.DoEvents();
@@ -699,7 +699,6 @@ namespace Perfect11
             string sevenZipPath = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), @"Tools\7z.exe");
             if (!File.Exists(sevenZipPath))
                 throw new FileNotFoundException("7-Zip not found.");
-
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = sevenZipPath,
@@ -708,15 +707,12 @@ namespace Perfect11
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
-
             using (Process proc = new Process { StartInfo = psi })
             {
                 proc.Start();
-
                 string line;
                 int lastPercent = 0;
                 var regex = new Regex(@"(\d+)%");
-
                 Invoke(new Action(() =>
                 {
                     installProgress.Value = 0;
@@ -727,11 +723,9 @@ namespace Perfect11
                     while (!proc.HasExited)
                     {
                         token.ThrowIfCancellationRequested();
-
                         line = proc.StandardOutput.ReadLine();
                         if (line == null)
                             continue;
-
                         var match = regex.Match(line);
                         if (match.Success)
                         {
@@ -749,7 +743,6 @@ namespace Perfect11
                     }
                 }, token);
                 proc.WaitForExit();
-
                 if (proc.ExitCode != 0)
                     throw new Exception($"7-Zip exited with code {proc.ExitCode}");
             }

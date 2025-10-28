@@ -1,13 +1,14 @@
-﻿using Microsoft.Win32;
-using Newtonsoft.Json;
-using Perfect11.TweaksInterface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
+using Microsoft.Win32;
+using Newtonsoft.Json;
+using Perfect11.TweaksInterface;
 
 namespace Perfect11.Library
 {
@@ -146,6 +147,19 @@ namespace Perfect11.Library
                     }
                 }
             }
+        }
+        public static string GetSystemArchitecture()
+        {
+            string arch = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
+            string archWow64 = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432");
+            string osArch;
+            if (!string.IsNullOrEmpty(archWow64))
+                osArch = archWow64; // 64-bit OS, 32-bit process
+            else
+                osArch = arch;
+            if (osArch.ToLower() == "arm64")
+                osArch = "A64";
+            return osArch;
         }
     }
 }
