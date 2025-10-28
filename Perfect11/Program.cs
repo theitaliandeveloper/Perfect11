@@ -4,13 +4,13 @@ using Perfect11.Library;
 
 namespace Perfect11
 {
-    internal static class Program
+    internal  class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+         void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

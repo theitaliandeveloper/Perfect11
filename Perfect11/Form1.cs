@@ -23,10 +23,12 @@ namespace Perfect11
         private List<string> _listSystemApps = new List<string>();
         private List<IPlugin> _tweaks = new List<IPlugin>();
         private CancellationTokenSource _cts;
+        private CancellationTokenSource _cts2;
+        private CancellationTokenSource _cts3;
         private bool _isDownloading = false;
-        string url = $"https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26200.6584.250915-1905.25h2_ge_release_svc_refresh_CLIENT_CONSUMER_{Utilities.GetSystemArchitecture()}FRE_{Utilities.GetLanguageCode()}.iso";
+        string url = $"https://software-.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26200.6584.250915-1905.25h2_ge_release_svc_refresh_CLIENT_CONSUMER_{Utilities.GetSystemArchitecture()}FRE_{Utilities.GetLanguageCode()}.iso";
         string destination = Path.Combine(@"C:\Temp", @"windows.iso");
-        private static string AppEdition = "Perfect11 Community Edition";
+        private  string AppEdition = "Perfect11 Community Edition";
         public Form1()
         {
             InitializeComponent();
@@ -84,7 +86,9 @@ namespace Perfect11
                 welcomePage.Theme = ThemeStyle.Light;
                 debloatPage.Theme = ThemeStyle.Light;
                 poisonLabel1.Theme = ThemeStyle.Light;
+                poisonLabel1.ForeColor = Color.FromArgb(255, 255, 255);
                 poisonLabel2.Theme = ThemeStyle.Light;
+                poisonLabel2.ForeColor = Color.FromArgb(255, 255, 255);
                 LblInstalledCount.Theme = ThemeStyle.Light;
                 LblRemoveCount.Theme = ThemeStyle.Light;
                 LstUWP.Theme = ThemeStyle.Light;
@@ -279,19 +283,15 @@ namespace Perfect11
             if (LstUWPRemove.SelectedItems.Count > 0)
             {
                 List<ListViewItem> selectedItems = new List<ListViewItem>();
-
                 foreach (ListViewItem selectedItem in LstUWPRemove.SelectedItems)
                 {
                     selectedItems.Add(selectedItem);
                 }
-
-                // Move each selected item
                 foreach (ListViewItem item in selectedItems)
                 {
                     LstUWP.Items.Add((ListViewItem)item.Clone());
                     LstUWPRemove.Items.Remove(item);
                 }
-
                 RefreshUWP();
             }
         }
@@ -313,43 +313,37 @@ namespace Perfect11
             if (LstUWPRemove.Items.Count == 0) { MessageBox.Show("No items were selected for removal.","Perfect11", MessageBoxButtons.OK,MessageBoxIcon.Information); }
             else
             {
-                Enabled = false;
+                _cts3 = new CancellationTokenSource();
+                BtnRunUninstaller.Enabled = false;
+                addAllButton.Enabled = false;
+                addButton.Enabled = false;
+                removeButton.Enabled = false;
+                removeAllButton.Enabled = false;
                 MessageBox.Show(RemoveUWP(),"Perfect11",MessageBoxButtons.OK,MessageBoxIcon.Information);
                 LstUWPRemove.Items.Clear();
                 GetUWP();
-                Enabled = true;
+                _cts3 = null;
             }
         }
         private void InitializeTweaks()
         {
             const string tweaksFolder = "Tweaks";
             const string interfaceDll = "Perfect11.TweaksInterface.dll";
-
-            // Ensure folder exists and remove old interface DLL
             if (!Directory.Exists(tweaksFolder))
                 Directory.CreateDirectory(tweaksFolder);
-
             string interfacePath = Path.Combine(tweaksFolder, interfaceDll);
             if (File.Exists(interfacePath))
                 File.Delete(interfacePath);
-
-            // Load categorized plugins
             var categorizedPlugins = Utilities.LoadTweaks(tweaksFolder);
-
-            // Setup ListView
             tweaksList.View = View.Details;
             tweaksList.FullRowSelect = true;
             tweaksList.ShowGroups = true;
             tweaksList.Items.Clear();
             tweaksList.Groups.Clear();
-
-            // Setup columns
             tweaksList.Columns.Clear();
             tweaksList.Columns.Add("Tweak");
             tweaksList.Columns.Add("Description");
             AdjustListViewColumns();
-
-            // Add groups and items
             foreach (var category in categorizedPlugins.OrderBy(c => c.Key))
             {
                 var group = new ListViewGroup(category.Key);
@@ -366,16 +360,11 @@ namespace Perfect11
                     tweaksList.Items.Add(item);
                 }
             }
-
-            // Enable or disable run button
             runTweaks.Enabled = tweaksList.Items.Count > 0;
         }
-
-        // Adjust column widths dynamically based on ListView client width
         private void AdjustListViewColumns()
         {
             if (tweaksList.Columns.Count < 2) return;
-
             int totalWidth = tweaksList.ClientSize.Width;
             tweaksList.Columns[0].Width = (int)(totalWidth * 0.3); // Tweak column
             tweaksList.Columns[1].Width = (int)(totalWidth * 0.7); // Description column
@@ -399,8 +388,8 @@ namespace Perfect11
                 MessageBox.Show("Select one or more plugins to run.","Perfect11",MessageBoxButtons.OK,MessageBoxIcon.Information);
                 return;
             }
-
-            Enabled = false; // prevent multiple clicks
+            runTweaks.Enabled = false;
+            _cts2 = new CancellationTokenSource();
             try
             {
                 foreach (ListViewItem item in tweaksList.SelectedItems)
@@ -418,7 +407,8 @@ namespace Perfect11
             }
             finally
             {
-                Enabled = true;
+                _cts2 = null;
+                runTweaks.Enabled = true;
             }
         }
 
@@ -447,14 +437,22 @@ namespace Perfect11
                 MessageBox.Show("Upgrade to Windows 11 is in progress, cannot change tab.", "Perfect11", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 pages.SelectedTab = upgradePage;
             }
+            else if (pages.SelectedTab != tweaksPage && _cts2 != null)
+            {
+                pages.SelectedTab = tweaksPage;
+            }
+            else if (pages.SelectedTab != debloatPage && _cts3 != null)
+            {
+                pages.SelectedTab = tweaksPage;
+            }
             if ((pages.SelectedTab == debloatPage || pages.SelectedTab == tweaksPage) && !Utilities.IsWindows11())
             {
-                MessageBox.Show("In order to use these features you need to upgrade to Windows 11.","Perfect11",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                MessageBox.Show("In order to use these features you need to upgrade to Windows 11.", "Perfect11", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 pages.SelectedTab = upgradePage;
             }
             else if (pages.SelectedTab == upgradePage && Utilities.IsWindows11())
             {
-                if (MessageBox.Show("You're already using Windows 11, there's no need to upgrade. However, this page might be useful as well for reinstallation. Are you sure to continue?", "Perfect11", MessageBoxButtons.YesNo, MessageBoxIcon.Information,MessageBoxDefaultButton.Button2) == DialogResult.No)
+                if (MessageBox.Show("You're already using Windows 11, there's no need to upgrade. However, this page might be useful as well for reinstallation. Are you sure to continue?", "Perfect11", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2) == DialogResult.No)
                 {
                     pages.SelectedTab = welcomePage;
                 }
@@ -751,7 +749,7 @@ namespace Perfect11
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_cts != null)
+            if (_cts != null || _cts2 != null || _cts3 != null)
                 e.Cancel = true;
         }
     }

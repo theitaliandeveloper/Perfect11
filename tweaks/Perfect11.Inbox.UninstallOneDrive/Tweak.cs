@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Perfect11.Inbox.UninstallOneDrive
 {
@@ -47,7 +48,10 @@ namespace Perfect11.Inbox.UninstallOneDrive
                 string oneDrivePath = Path.Combine(dir, "OneDrive");
                 if (Directory.Exists(oneDrivePath) && Directory.EnumerateFileSystemEntries(oneDrivePath).Any())
                 {
-                    throw new Exception("OneDrive files found, cannot continue!");
+                    if (MessageBox.Show("OneDrive files and/or folder was found, it might be empty or it might contain some files (who knows?). Are you sure to continue","Perfect11",MessageBoxButtons.YesNo,MessageBoxIcon.Warning,MessageBoxDefaultButton.Button2) == DialogResult.No)
+                    {
+                        throw new Exception("OneDrive files found, cannot continue!");
+                    }
                 }
             }
 

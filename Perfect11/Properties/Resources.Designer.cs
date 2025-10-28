@@ -24,9 +24,9 @@ namespace Perfect11.Properties {
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
         
-        private static global::System.Resources.ResourceManager resourceMan;
+        private  global::System.Resources.ResourceManager resourceMan;
         
-        private static global::System.Globalization.CultureInfo resourceCulture;
+        private  global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
@@ -36,7 +36,7 @@ namespace Perfect11.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        internal  global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Perfect11.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace Perfect11.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        internal  global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -66,7 +66,7 @@ namespace Perfect11.Properties {
         ///[VL]
         ///0.
         /// </summary>
-        internal static string EI_CFG {
+        internal  string EI_CFG {
             get {
                 return ResourceManager.GetString("EI_CFG", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Perfect11.Properties {
         ///                &lt;HideEULAPage&gt;true&lt;/HideEULAPage&gt;
         ///                &lt;HideOEMRegistrat [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string unattend_OOBEAutomate {
+        internal  string unattend_OOBEAutomate {
             get {
                 return ResourceManager.GetString("unattend_OOBEAutomate", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Perfect11.Properties {
         ///Microsoft.Services.Store.Engagement
         ///Microsoft.V [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string UWPSystemAppList {
+        internal  string UWPSystemAppList {
             get {
                 return ResourceManager.GetString("UWPSystemAppList", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Perfect11.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap win11logo {
+        internal  System.Drawing.Bitmap win11logo {
             get {
                 object obj = ResourceManager.GetObject("win11logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -127,7 +127,7 @@ namespace Perfect11.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap win11wallpaperdark {
+        internal  System.Drawing.Bitmap win11wallpaperdark {
             get {
                 object obj = ResourceManager.GetObject("win11wallpaperdark", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -137,7 +137,7 @@ namespace Perfect11.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap win11wallpaperlight {
+        internal  System.Drawing.Bitmap win11wallpaperlight {
             get {
                 object obj = ResourceManager.GetObject("win11wallpaperlight", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));

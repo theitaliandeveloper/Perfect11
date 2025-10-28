@@ -20,14 +20,14 @@ namespace Perfect11.Library
     }
     public class Utilities
     {
-        public static bool IsWindows11()
+        public  bool IsWindows11()
         {
             string buildNumber = (string)Registry.GetValue(
                 @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion",
                 "CurrentBuildNumber", null);
             return int.TryParse(buildNumber, out int build) && build >= 22000;
         }
-        public static Dictionary<string, List<IPlugin>> LoadTweaks(string path)
+        public  Dictionary<string, List<IPlugin>> LoadTweaks(string path)
         {
             var categorizedPlugins = new Dictionary<string, List<IPlugin>>(StringComparer.OrdinalIgnoreCase);
 
@@ -58,14 +58,14 @@ namespace Perfect11.Library
 
             return categorizedPlugins;
         }
-        public static bool IsAppsDarkMode()
+        public  bool IsAppsDarkMode()
         {
             RegistryKey rk = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize");
             int value = (int)rk.GetValue("AppsUseLightTheme");
             rk.Close();
             return value == 0;
         }
-        public static string EolApp(string app)
+        public  string EolApp(string app)
         {
             try
             {
@@ -115,12 +115,12 @@ namespace Perfect11.Library
                 return $"Error: {ex.Message}";
             }
         }
-        public static string GetLanguageCode()
+        public  string GetLanguageCode()
         {
             string languageCode = CultureInfo.CurrentUICulture.Name;
             return languageCode.ToLower();
         }
-        public static List<AppInfo> LoadApps(string resourceName)
+        public  List<AppInfo> LoadApps(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();
 
@@ -148,7 +148,7 @@ namespace Perfect11.Library
                 }
             }
         }
-        public static string GetSystemArchitecture()
+        public  string GetSystemArchitecture()
         {
             string arch = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
             string archWow64 = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432");

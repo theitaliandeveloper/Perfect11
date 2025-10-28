@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{77376E26-3164-4ED7-9F85-02B3AEBFC751}</ProjectGuid>
+    <ProjectGuid>{A33DF785-C123-48E2-B21E-A229FC8FFB55}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Perfect11.Inbox.Spotlight</RootNamespace>
-    <AssemblyName>Perfect11.Inbox.Spotlight</AssemblyName>
+    <RootNamespace>Perfect11.Inbox.UninstallEdge</RootNamespace>
+    <AssemblyName>Perfect11.Inbox.UninstallEdge</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

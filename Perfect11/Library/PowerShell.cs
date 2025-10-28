@@ -4,7 +4,7 @@ namespace Perfect11.Library
 {
     public class PowerShell
     {
-        public static string Execute(string command)
+        public  string Execute(string command)
         {
             ProcessStartInfo psi = new ProcessStartInfo
             {

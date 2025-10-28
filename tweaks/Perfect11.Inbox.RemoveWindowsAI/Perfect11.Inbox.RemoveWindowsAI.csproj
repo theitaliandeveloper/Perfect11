@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{77376E26-3164-4ED7-9F85-02B3AEBFC751}</ProjectGuid>
+    <ProjectGuid>{BC3A0BBD-E076-426E-88C9-C36E1F6D3326}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Perfect11.Inbox.Spotlight</RootNamespace>
-    <AssemblyName>Perfect11.Inbox.Spotlight</AssemblyName>
+    <RootNamespace>Perfect11.Inbox.RemoveWindowsAI</RootNamespace>
+    <AssemblyName>Perfect11.Inbox.RemoveWindowsAI</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />

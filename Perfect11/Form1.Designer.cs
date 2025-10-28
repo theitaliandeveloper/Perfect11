@@ -129,7 +129,7 @@
             this.pages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pages.Location = new System.Drawing.Point(3, 28);
             this.pages.Name = "pages";
-            this.pages.SelectedIndex = 1;
+            this.pages.SelectedIndex = 0;
             this.pages.Size = new System.Drawing.Size(1323, 732);
             this.pages.TabIndex = 1;
             this.pages.UseSelectable = true;
@@ -156,9 +156,12 @@
             // 
             // poisonLabel2
             // 
+            this.poisonLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.poisonLabel2.AutoSize = true;
             this.poisonLabel2.BackColor = System.Drawing.Color.Transparent;
-            this.poisonLabel2.Location = new System.Drawing.Point(416, 379);
+            this.poisonLabel2.Location = new System.Drawing.Point(422, 362);
             this.poisonLabel2.Name = "poisonLabel2";
             this.poisonLabel2.Size = new System.Drawing.Size(459, 38);
             this.poisonLabel2.TabIndex = 3;
@@ -166,11 +169,12 @@
     "stalls apps, remove bloatware, tweak the system and even more.";
             this.poisonLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.poisonLabel2.UseCustomBackColor = true;
+            this.poisonLabel2.UseCustomForeColor = true;
             // 
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Perfect11.Properties.Resources.win11logo;
-            this.pictureBox1.Location = new System.Drawing.Point(559, 156);
+            this.pictureBox1.Location = new System.Drawing.Point(563, 152);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(163, 160);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -179,16 +183,20 @@
             // 
             // poisonLabel1
             // 
+            this.poisonLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.poisonLabel1.AutoSize = true;
             this.poisonLabel1.BackColor = System.Drawing.Color.Transparent;
             this.poisonLabel1.FontSize = ReaLTaiizor.Extension.Poison.PoisonLabelSize.Tall;
-            this.poisonLabel1.Location = new System.Drawing.Point(374, 336);
+            this.poisonLabel1.Location = new System.Drawing.Point(384, 326);
             this.poisonLabel1.Name = "poisonLabel1";
             this.poisonLabel1.Size = new System.Drawing.Size(533, 25);
             this.poisonLabel1.TabIndex = 2;
             this.poisonLabel1.Text = "Welcome to Perfect11, the tool that makes Windows 11 almost perfect.";
             this.poisonLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.poisonLabel1.UseCustomBackColor = true;
+            this.poisonLabel1.UseCustomForeColor = true;
             // 
             // upgradePage
             // 
@@ -541,12 +549,14 @@
             // 
             this.editionLabel.AutoSize = true;
             this.editionLabel.BackColor = System.Drawing.Color.Transparent;
-            this.editionLabel.Location = new System.Drawing.Point(12, 763);
+            this.editionLabel.Location = new System.Drawing.Point(12, 767);
             this.editionLabel.Name = "editionLabel";
-            this.editionLabel.Size = new System.Drawing.Size(175, 19);
+            this.editionLabel.Size = new System.Drawing.Size(213, 21);
             this.editionLabel.TabIndex = 4;
             this.editionLabel.Text = "Perfect11 Community Edition";
             this.editionLabel.UseCustomBackColor = true;
+            this.editionLabel.UseCustomFont = true;
+            this.editionLabel.UseCustomForeColor = true;
             // 
             // Form1
             // 
