@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11.Inbox.Widgets", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11.Inbox.UninstallEdge", "tweaks\Perfect11.Inbox.UninstallEdge\Perfect11.Inbox.UninstallEdge.csproj", "{A33DF785-C123-48E2-B21E-A229FC8FFB55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfect11.Inbox.DisableVBS", "tweaks\Perfect11.Inbox.DisableVBS\Perfect11.Inbox.DisableVBS.csproj", "{998241DA-25C9-4CB6-B893-7158A387C030}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{A33DF785-C123-48E2-B21E-A229FC8FFB55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A33DF785-C123-48E2-B21E-A229FC8FFB55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A33DF785-C123-48E2-B21E-A229FC8FFB55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{998241DA-25C9-4CB6-B893-7158A387C030}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{998241DA-25C9-4CB6-B893-7158A387C030}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{998241DA-25C9-4CB6-B893-7158A387C030}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{998241DA-25C9-4CB6-B893-7158A387C030}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

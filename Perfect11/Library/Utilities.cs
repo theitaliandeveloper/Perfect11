@@ -69,26 +69,19 @@ namespace Perfect11.Library
         {
             try
             {
-                // Use your PowerShell.Execute helper
                 string packageFullName = PowerShell.Execute(
                     "Get-AppxPackage -AllUsers | Where-Object { $_.PackageFullName -like '*" + app +"*' } | Select-Object -ExpandProperty PackageFullName"
                 );
-
                 if (string.IsNullOrWhiteSpace(packageFullName))
                 {
                     return "Sticky Notes package not found.";
                 }
-
                 Console.WriteLine($"Found package: {packageFullName}");
-
-                // Get current user SID
                 string userSid = WindowsIdentity.GetCurrent().User?.Value;
                 if (string.IsNullOrEmpty(userSid))
                 {
                     return "Unable to get current user SID.";
                 }
-
-                // Registry base path
                 string basePath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Appx\AppxAllUserStore";
                 string[] subKeys =
                 {
@@ -96,7 +89,6 @@ namespace Perfect11.Library
                 $@"EndOfLife\S-1-5-18\{packageFullName}",
                 $@"Deprovisioned\{packageFullName}"
             };
-
                 foreach (var subKey in subKeys)
                 {
                     try

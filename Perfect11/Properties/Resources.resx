@@ -120,12 +120,15 @@
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="EI_CFG" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\EI.CFG.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <comment>EI.CFG for Windows</comment>
   </data>
   <data name="unattend_OOBEAutomate" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\unattend-OOBEAutomate.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <comment>Unattend.xml for OOBE automation</comment>
   </data>
   <data name="UWPSystemAppList" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UWPSystemAppList.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>List of UWP System Apps</comment>
   </data>
   <data name="win11logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Images\win11logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

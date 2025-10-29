@@ -1,4 +1,5 @@
 ﻿using Perfect11.TweaksInterface;
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -37,7 +38,7 @@ namespace Perfect11.Inbox.RemoveWindowsAI
             }
             else
             {
-                return "Operation aborted by user.";
+                throw new Exception("Operation aborted by user.");
             }
         }
     }
